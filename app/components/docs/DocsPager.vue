@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+type PagerItem = {
+  path: string
+  title: string
+  description?: string | null
+}
 
 defineProps<{
-  previous?: ContentNavigationItem | null
-  next?: ContentNavigationItem | null
+  previous?: PagerItem | null
+  next?: PagerItem | null
 }>()
 </script>
 
@@ -20,7 +24,7 @@ defineProps<{
       <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Previous</p>
       <p class="mt-3 text-base font-semibold text-slate-950">{{ previous.title }}</p>
       <p
-        v-if="'description' in previous && previous.description"
+        v-if="previous.description"
         class="mt-2 text-sm leading-6 text-slate-600"
       >
         {{ previous.description }}
@@ -37,7 +41,7 @@ defineProps<{
       <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Next</p>
       <p class="mt-3 text-base font-semibold text-slate-950">{{ next.title }}</p>
       <p
-        v-if="'description' in next && next.description"
+        v-if="next.description"
         class="mt-2 text-sm leading-6 text-slate-600"
       >
         {{ next.description }}

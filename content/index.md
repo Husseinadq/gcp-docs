@@ -1,67 +1,76 @@
 ---
-title: Choose the Right Kind of GCP Page
-description: Four ways to learn Google Cloud without guesswork: tutorial, how-to, explanation, and reference.
-summary: Stop opening the wrong kind of document for the job you are trying to do.
+title: GCP Docs Directory
+description: Browse Google Cloud docs by service first, then move into quickstarts, guides, concepts, and reference.
+summary: Start with the right product hub, then choose the depth you need.
 estimatedTime: 4 minutes
 lastReviewed: 2026-03-11
 order: 0
 bestFor:
-  - Teams new to GCP
-  - Readers who get lost in product menus
-  - People switching between learning and shipping
+  - Teams choosing their first GCP service
+  - Readers who prefer product navigation
+  - Developers moving between overview and execution
 related:
+  - /docs/cloud-run
+  - /docs/cloud-storage
+  - /docs/iam
   - /docs/learn
-  - /docs/how-to
-  - /docs/explain
-  - /docs/reference
 ---
 
 ## TL;DR
 
-Most confusing documentation fails because it mixes four different jobs into one pile.
+This docs system works best in two steps:
 
-Use this rule instead:
+1. open the service hub you care about
+2. choose the right depth inside that service
 
-- open a **tutorial** when you want to learn by building
-- open a **how-to** when you want to finish one task
-- open an **explanation** when the platform still feels fuzzy
-- open a **reference** when you only need facts fast
+That means:
 
-## How to choose the right page
+- open **Cloud Run** when the job is managed compute
+- open **Cloud Storage** when the job is durable file storage
+- open **Cloud SQL** when the job is relational data
+- open **Pub/Sub** when the job is asynchronous messaging
+- open **Vertex AI** when the job is AI features
+- open **IAM** when the problem is permissions and identities
 
-### Choose a tutorial when
+## Why the docs are structured this way
 
-- you are new to the platform
-- you want a guided path
-- you need context and checkpoints
+Good product docs make product switching easy.
 
-### Choose a how-to when
+Good learning docs make concept-building easy.
 
-- you already know the outcome you want
-- you do not need a full lesson
-- you want exact steps with fewer detours
+This site combines both:
 
-### Choose an explanation when
+- the top bar gets you to the right GCP service quickly
+- each service hub helps you choose quickstart, guide, concept, or reference next
 
-- GCP vocabulary still feels mysterious
-- you do not understand why one product exists instead of another
-- permissions, projects, or regions keep confusing you
+## How to use the directory
 
-### Choose a reference page when
+### If you already know the service
 
-- you already understand the concept
-- you need a snapshot, comparison, or defaults
-- you want to look something up and move on
+Open the service hub from the top bar or from the featured services grid below.
 
-## Recommended reading path for a web app team
+### If you only know the outcome
 
-1. Read [How GCP Is Organized](/docs/explain/how-gcp-is-organized).
-2. Follow [Ship Your First Web App on GCP](/docs/learn/ship-your-first-web-app-on-gcp).
-3. Use [Deploy to Cloud Run](/docs/how-to/deploy-to-cloud-run) when you are ready to do the deployment for real.
-4. Keep [Cloud Run](/docs/reference/cloud-run) open for fast lookups.
+Use the goal cards on this page, then open the recommended service hub.
+
+### If the platform still feels mysterious
+
+After opening a service hub, switch into:
+
+- [Learn by Building](/docs/learn)
+- [Solve a Specific Task](/docs/how-to)
+- [Understand the Platform](/docs/explain)
+- [Look Up Facts Fast](/docs/reference)
+
+## Recommended first path for most teams
+
+1. Open [Cloud Run](/docs/cloud-run).
+2. Read [How GCP Is Organized](/docs/explain/how-gcp-is-organized).
+3. Follow [Ship Your First Web App on GCP](/docs/learn/ship-your-first-web-app-on-gcp).
+4. Use [Deploy to Cloud Run](/docs/how-to/deploy-to-cloud-run) for the real task execution.
 
 ## Common mistake
 
-The most expensive beginner mistake is opening reference pages too early.
+Do not open ten product pages before you choose the first service boundary.
 
-Reference is excellent after the mental model is clear. It is a bad teacher when the reader still does not know how the parts fit together.
+Start with one service hub, get the shape of the system clear, then go deeper.

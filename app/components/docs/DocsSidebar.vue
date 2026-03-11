@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { docsModes } from '~/utils/docs'
+import { docsModes, servicePathOrder } from '~/utils/docs'
 
 type NavigationItem = ContentNavigationItem & {
   order?: number
@@ -16,13 +16,13 @@ const overview = computed(() =>
   props.navigation.find((item) => item.path === '/docs')
 )
 
-const modeOrder = new Map(docsModes.map((mode, index) => [mode.path, index]))
+const modeOrder = new Map(docsModes.map((mode, index) => [mode.path, index + 100]))
 
 function sortItems(items: NavigationItem[]) {
   return [...items]
     .sort((left, right) => {
-      const leftMode = modeOrder.get(left.path)
-      const rightMode = modeOrder.get(right.path)
+      const leftMode = servicePathOrder.get(left.path) ?? modeOrder.get(left.path)
+      const rightMode = servicePathOrder.get(right.path) ?? modeOrder.get(right.path)
 
       if (leftMode !== undefined || rightMode !== undefined) {
         return (leftMode ?? Number.MAX_SAFE_INTEGER) - (rightMode ?? Number.MAX_SAFE_INTEGER)
@@ -48,10 +48,10 @@ const sections = computed(() => {
 <template>
   <div class="surface-panel p-5">
     <div class="mb-5">
-      <p class="docs-kicker">Choose a mode</p>
-      <h2 class="mt-2 text-lg font-semibold tracking-tight text-slate-950">Read the right kind of page</h2>
+      <p class="docs-kicker">Browse the docs</p>
+      <h2 class="mt-2 text-lg font-semibold tracking-tight text-slate-950">Services first, depth second</h2>
       <p class="mt-2 text-sm leading-6 text-slate-600">
-        Tutorials teach. How-to guides solve. Explanations clarify. Reference pages answer fast.
+        Start with a service hub, then move into quickstarts, guides, concepts, and reference.
       </p>
     </div>
 

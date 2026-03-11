@@ -1,8 +1,38 @@
 <script setup lang="ts">
-import { getDocTypeMeta } from '~/utils/docs'
+import { allServices, getDocTypeMeta } from '~/utils/docs'
+
+type CatalogEntry = {
+  path: string
+  title: string
+  description?: string | null
+  category?: string | null
+  order?: number | null
+}
 
 const route = useRoute()
 const currentPath = computed(() => route.path.replace(/\/$/, '') || '/docs')
+const serviceSectionOrder = new Map([
+  ['Get started', 0],
+  ['Guides', 1],
+  ['Concepts', 2],
+  ['Operate', 3],
+  ['Reference', 4]
+])
+
+function sortServiceDocs(left: CatalogEntry, right: CatalogEntry) {
+  const leftSection = serviceSectionOrder.get(left.category || '') ?? Number.MAX_SAFE_INTEGER
+  const rightSection = serviceSectionOrder.get(right.category || '') ?? Number.MAX_SAFE_INTEGER
+
+  if (leftSection !== rightSection) {
+    return leftSection - rightSection
+  }
+
+  if ((left.order ?? 999) !== (right.order ?? 999)) {
+    return (left.order ?? 999) - (right.order ?? 999)
+  }
+
+  return left.title.localeCompare(right.title)
+}
 
 const [{ data: page }, { data: navigation }, { data: surroundings }, { data: catalog }] = await Promise.all([
   useAsyncData(
@@ -16,7 +46,7 @@ const [{ data: page }, { data: navigation }, { data: surroundings }, { data: cat
   ),
   useAsyncData(
     'docs-catalog',
-    () => queryCollection('docs').select('path', 'title', 'description').all()
+    () => queryCollection('docs').select('path', 'title', 'description', 'category', 'order').all()
   )
 ])
 
@@ -27,11 +57,57 @@ if (!page.value) {
   })
 }
 
-const previous = computed(() => surroundings.value?.[0] ?? null)
-const next = computed(() => surroundings.value?.[1] ?? null)
+const catalogEntries = computed(() => (catalog.value ?? []) as CatalogEntry[])
+const activeService = computed(() =>
+  allServices.find((service) => currentPath.value === service.path || currentPath.value.startsWith(`${service.path}/`)) ?? null
+)
+const servicePages = computed(() => {
+  if (!activeService.value) {
+    return []
+  }
+
+  return catalogEntries.value
+    .filter((entry) => entry.path.startsWith(`${activeService.value!.path}/`) && entry.path !== activeService.value!.path)
+    .sort(sortServiceDocs)
+})
+const serviceSequence = computed(() => {
+  if (!activeService.value) {
+    return []
+  }
+
+  const overview =
+    catalogEntries.value.find((entry) => entry.path === activeService.value!.path) ??
+    {
+      path: activeService.value.path,
+      title: activeService.value.title,
+      description: activeService.value.description
+    }
+
+  return [overview, ...servicePages.value]
+})
+const previous = computed(() => {
+  if (!activeService.value) {
+    return surroundings.value?.[0] ?? null
+  }
+
+  const currentIndex = serviceSequence.value.findIndex((entry) => entry.path === currentPath.value)
+
+  return currentIndex > 0 ? serviceSequence.value[currentIndex - 1] : null
+})
+const next = computed(() => {
+  if (!activeService.value) {
+    return surroundings.value?.[1] ?? null
+  }
+
+  const currentIndex = serviceSequence.value.findIndex((entry) => entry.path === currentPath.value)
+
+  return currentIndex >= 0 && currentIndex < serviceSequence.value.length - 1
+    ? serviceSequence.value[currentIndex + 1]
+    : null
+})
 const typeMeta = computed(() => getDocTypeMeta(page.value?.docType))
 const relatedDocs = computed(() => {
-  const docsByPath = new Map((catalog.value ?? []).map((entry) => [entry.path, entry]))
+  const docsByPath = new Map(catalogEntries.value.map((entry) => [entry.path, entry]))
 
   return (page.value?.related ?? [])
     .map((path) => docsByPath.get(path))
@@ -52,6 +128,8 @@ useSeoMeta({
     :current-path="currentPath"
     :navigation="navigation ?? []"
     :toc-links="page.body?.toc?.links ?? []"
+    :service="activeService"
+    :service-pages="servicePages"
   >
     <article class="surface-panel p-6 sm:p-8">
       <div class="mb-8 flex flex-wrap gap-3 text-sm">

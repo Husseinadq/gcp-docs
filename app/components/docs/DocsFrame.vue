@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import type { ContentNavigationItem, TocLink } from '@nuxt/content'
+import type { ServiceNavItem } from '~/utils/docs'
 
-defineProps<{
+type ServiceSidebarItem = {
+  path: string
+  title: string
+  description?: string | null
+  category?: string | null
+  order?: number | null
+}
+
+withDefaults(defineProps<{
   title: string
   description?: string
   eyebrow?: string
   currentPath: string
   navigation: ContentNavigationItem[]
   tocLinks?: TocLink[]
-}>()
+  service?: ServiceNavItem | null
+  servicePages?: ServiceSidebarItem[]
+}>(), {
+  service: null,
+  servicePages: () => []
+})
 </script>
 
 <template>
@@ -32,11 +46,17 @@ defineProps<{
       <div class="border-t border-white/70 px-4 py-4 xl:hidden">
         <details class="group rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3">
           <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-slate-800">
-            Browse docs
+            {{ service ? 'Browse this service' : 'Browse docs' }}
             <Icon name="lucide:chevron-down" class="text-base transition group-open:rotate-180" />
           </summary>
           <div class="mt-4">
-            <DocsSidebar :navigation="navigation" :current-path="currentPath" />
+            <DocsServiceSidebar
+              v-if="service"
+              :service="service"
+              :pages="servicePages"
+              :current-path="currentPath"
+            />
+            <DocsSidebar v-else :navigation="navigation" :current-path="currentPath" />
           </div>
         </details>
       </div>
@@ -44,7 +64,13 @@ defineProps<{
 
     <div class="grid items-start gap-8 xl:grid-cols-[18rem_minmax(0,1fr)_17rem]">
       <aside class="hidden xl:block xl:sticky xl:top-24">
-        <DocsSidebar :navigation="navigation" :current-path="currentPath" />
+        <DocsServiceSidebar
+          v-if="service"
+          :service="service"
+          :pages="servicePages"
+          :current-path="currentPath"
+        />
+        <DocsSidebar v-else :navigation="navigation" :current-path="currentPath" />
       </aside>
 
       <section class="min-w-0">

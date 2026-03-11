@@ -11,7 +11,7 @@ export default defineContentConfig({
       },
       schema: z.object({
         order: z.number().default(0),
-        docType: z.enum(['tutorial', 'how-to', 'explanation', 'reference']).optional(),
+        docType: z.enum(['tutorial', 'how-to', 'explanation', 'reference', 'service-hub']).optional(),
         category: z.string().optional(),
         goal: z.string().optional(),
         product: z.string().optional(),
