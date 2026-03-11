@@ -1,0 +1,105 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Avenir Next", "Segoe UI", "Noto Sans", sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+
+  --color-atlas-50: #f7faf9;
+  --color-atlas-100: #edf6f3;
+  --color-atlas-200: #d7ebe4;
+  --color-atlas-300: #b6dacd;
+  --color-atlas-400: #7eb9a3;
+  --color-atlas-500: #4f977f;
+  --color-atlas-600: #337562;
+  --color-atlas-700: #275b4d;
+  --color-atlas-800: #21483d;
+  --color-atlas-900: #1a3931;
+
+  --color-signal-50: #fff8ed;
+  --color-signal-100: #ffefd5;
+  --color-signal-200: #ffd8a8;
+  --color-signal-300: #ffbc6f;
+  --color-signal-400: #ff9a33;
+  --color-signal-500: #f57d0f;
+  --color-signal-600: #d86409;
+  --color-signal-700: #b24c09;
+  --color-signal-800: #903d0d;
+  --color-signal-900: #76340f;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-stone-50 text-slate-900;
+  }
+
+  ::selection {
+    @apply bg-atlas-200 text-slate-950;
+  }
+}
+
+@layer components {
+  .surface-panel {
+    @apply rounded-3xl border border-white/70 bg-white/80 shadow-[0_20px_50px_-28px_rgba(15,23,42,0.35)] backdrop-blur;
+  }
+
+  .docs-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.24em] text-atlas-700;
+  }
+
+  .docs-prose {
+    @apply prose prose-slate max-w-none text-[1.04rem] leading-8;
+  }
+
+  .docs-prose :where(h2, h3, h4) {
+    scroll-margin-top: 7rem;
+  }
+
+  .docs-prose :where(h2) {
+    @apply mt-12 border-t border-slate-200/80 pt-8 text-2xl font-semibold text-slate-950;
+  }
+
+  .docs-prose :where(h3) {
+    @apply mt-10 text-xl font-semibold text-slate-950;
+  }
+
+  .docs-prose :where(p, li) {
+    @apply text-slate-700;
+  }
+
+  .docs-prose :where(a) {
+    @apply font-medium text-atlas-700 no-underline transition hover:text-atlas-900;
+  }
+
+  .docs-prose :where(strong) {
+    @apply text-slate-950;
+  }
+
+  .docs-prose :where(code) {
+    @apply rounded-md bg-slate-100 px-1.5 py-0.5 text-sm font-medium text-slate-900 before:content-none after:content-none;
+  }
+
+  .docs-prose :where(pre) {
+    @apply rounded-3xl border border-slate-900/90 bg-slate-950 px-5 py-5 text-slate-100 shadow-none;
+  }
+
+  .docs-prose :where(pre code) {
+    @apply bg-transparent p-0 text-[0.92rem] text-inherit;
+  }
+
+  .docs-prose :where(blockquote) {
+    @apply rounded-r-2xl border-l-4 border-signal-400 bg-signal-50 py-1 pl-5 text-slate-700;
+  }
+
+  .docs-prose :where(thead th) {
+    @apply text-slate-950;
+  }
+
+  .docs-prose :where(tbody td) {
+    @apply text-slate-700;
+  }
+}

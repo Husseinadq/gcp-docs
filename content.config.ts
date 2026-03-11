@@ -1,0 +1,27 @@
+import { defineCollection, defineContentConfig, z } from '@nuxt/content'
+
+export default defineContentConfig({
+  collections: {
+    docs: defineCollection({
+      type: 'page',
+      source: {
+        include: '**/*.md',
+        cwd: 'content',
+        prefix: '/docs'
+      },
+      schema: z.object({
+        category: z.string().optional(),
+        product: z.string().optional(),
+        summary: z.string().optional(),
+        difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+        estimatedTime: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        related: z.array(z.string()).default([]),
+        awsEquivalent: z.string().optional(),
+        azureEquivalent: z.string().optional(),
+        lastReviewed: z.string().optional(),
+        icon: z.string().optional()
+      })
+    })
+  }
+})
