@@ -4,6 +4,7 @@ import type { ContentNavigationItem, TocLink } from '@nuxt/content'
 defineProps<{
   title: string
   description?: string
+  eyebrow?: string
   currentPath: string
   navigation: ContentNavigationItem[]
   tocLinks?: TocLink[]
@@ -16,7 +17,7 @@ defineProps<{
       <div
         class="border-b border-white/70 bg-[linear-gradient(135deg,rgba(79,151,127,0.14),rgba(255,255,255,0.88)_44%,rgba(245,125,15,0.12))] px-6 py-8 sm:px-8"
       >
-        <p class="docs-kicker">Google Cloud, explained clearly</p>
+        <p class="docs-kicker">{{ eyebrow || 'Google Cloud, explained clearly' }}</p>
         <h1 class="mt-3 max-w-4xl font-serif text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
           {{ title }}
         </h1>

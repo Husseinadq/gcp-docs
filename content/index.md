@@ -1,63 +1,67 @@
 ---
-title: Docs Overview
-description: Start with the fastest learning path for Google Cloud, then move into products, concepts, and architecture guides.
-summary: A plain-language map of the docs and the first pages to read.
+title: Choose the Right Kind of GCP Page
+description: Four ways to learn Google Cloud without guesswork: tutorial, how-to, explanation, and reference.
+summary: Stop opening the wrong kind of document for the job you are trying to do.
 estimatedTime: 4 minutes
 lastReviewed: 2026-03-11
+order: 0
+bestFor:
+  - Teams new to GCP
+  - Readers who get lost in product menus
+  - People switching between learning and shipping
+related:
+  - /docs/learn
+  - /docs/how-to
+  - /docs/explain
+  - /docs/reference
 ---
 
 ## TL;DR
 
-If you are new to Google Cloud, read the docs in this order:
+Most confusing documentation fails because it mixes four different jobs into one pile.
 
-1. [What is GCP?](/docs/start-here/what-is-gcp)
-2. [GCP for web apps](/docs/start-here/gcp-for-web-apps)
-3. [IAM basics](/docs/core-concepts/iam-basics)
-4. [Cloud Run](/docs/products/cloud-run)
-5. [Cloud Storage](/docs/products/cloud-storage)
+Use this rule instead:
 
-## What makes this docs project different
+- open a **tutorial** when you want to learn by building
+- open a **how-to** when you want to finish one task
+- open an **explanation** when the platform still feels fuzzy
+- open a **reference** when you only need facts fast
 
-Most cloud documentation is organized around products and internal company structure. That is useful when you already know what you need, but it is frustrating when you are still learning the platform.
+## How to choose the right page
 
-This site is designed to be:
+### Choose a tutorial when
 
-- task-first instead of product-first
-- opinionated instead of neutral to the point of being vague
-- focused on tradeoffs, not only happy paths
-- easier for beginners and startup teams to move through quickly
+- you are new to the platform
+- you want a guided path
+- you need context and checkpoints
 
-## Recommended reading paths
+### Choose a how-to when
 
-### I want to deploy a web app
+- you already know the outcome you want
+- you do not need a full lesson
+- you want exact steps with fewer detours
 
-Start with [GCP for web apps](/docs/start-here/gcp-for-web-apps), then continue with [Cloud Run](/docs/products/cloud-run) and [Cloud Storage](/docs/products/cloud-storage).
+### Choose an explanation when
 
-### I keep getting lost in IAM
+- GCP vocabulary still feels mysterious
+- you do not understand why one product exists instead of another
+- permissions, projects, or regions keep confusing you
 
-Read [IAM basics](/docs/core-concepts/iam-basics) before touching production permissions. It gives you the mental model that makes the rest of GCP less confusing.
+### Choose a reference page when
 
-### I just need the vocabulary first
+- you already understand the concept
+- you need a snapshot, comparison, or defaults
+- you want to look something up and move on
 
-Begin with [What is GCP?](/docs/start-here/what-is-gcp). It explains projects, billing, regions, services, and the idea of a workload in plain English.
+## Recommended reading path for a web app team
 
-## Current sections
+1. Read [How GCP Is Organized](/docs/explain/how-gcp-is-organized).
+2. Follow [Ship Your First Web App on GCP](/docs/learn/ship-your-first-web-app-on-gcp).
+3. Use [Deploy to Cloud Run](/docs/how-to/deploy-to-cloud-run) when you are ready to do the deployment for real.
+4. Keep [Cloud Run](/docs/reference/cloud-run) open for fast lookups.
 
-### Start Here
+## Common mistake
 
-Foundations for understanding the platform and choosing a simple first stack.
+The most expensive beginner mistake is opening reference pages too early.
 
-### Core Concepts
-
-The ideas that appear everywhere in GCP, such as IAM, networking, storage, and observability.
-
-### Products
-
-Focused guides for the services most teams use first, starting with Cloud Run and Cloud Storage.
-
-## How to use these docs well
-
-- Read the TL;DR first.
-- Do not skip the "Avoid if" sections.
-- Use the product guides only after reading the Start Here pages.
-- Treat architecture advice as defaults, not as hard rules.
+Reference is excellent after the mental model is clear. It is a bad teacher when the reader still does not know how the parts fit together.

@@ -10,11 +10,16 @@ export default defineContentConfig({
         prefix: '/docs'
       },
       schema: z.object({
+        order: z.number().default(0),
+        docType: z.enum(['tutorial', 'how-to', 'explanation', 'reference']).optional(),
         category: z.string().optional(),
+        goal: z.string().optional(),
         product: z.string().optional(),
         summary: z.string().optional(),
         difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
         estimatedTime: z.string().optional(),
+        bestFor: z.array(z.string()).default([]),
+        prerequisites: z.array(z.string()).default([]),
         tags: z.array(z.string()).default([]),
         related: z.array(z.string()).default([]),
         awsEquivalent: z.string().optional(),

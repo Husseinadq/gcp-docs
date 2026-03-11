@@ -14,6 +14,33 @@
         </div>
       </NuxtLink>
 
+      <nav class="hidden items-center gap-2 lg:flex">
+        <NuxtLink
+          to="/docs/learn"
+          class="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-950"
+        >
+          Learn
+        </NuxtLink>
+        <NuxtLink
+          to="/docs/how-to"
+          class="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-950"
+        >
+          Solve
+        </NuxtLink>
+        <NuxtLink
+          to="/docs/explain"
+          class="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-950"
+        >
+          Understand
+        </NuxtLink>
+        <NuxtLink
+          to="/docs/reference"
+          class="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-950"
+        >
+          Reference
+        </NuxtLink>
+      </nav>
+
       <nav class="flex items-center gap-2 sm:gap-3">
         <NuxtLink
           to="/"
@@ -25,7 +52,7 @@
           to="/docs"
           class="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
         >
-          Read the docs
+          Choose a path
         </NuxtLink>
       </nav>
     </div>

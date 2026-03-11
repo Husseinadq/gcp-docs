@@ -51,6 +51,18 @@
     @apply text-xs font-semibold uppercase tracking-[0.24em] text-atlas-700;
   }
 
+  .docs-chip {
+    @apply rounded-full px-3 py-1.5 text-sm font-medium;
+  }
+
+  .docs-note-card {
+    @apply rounded-3xl border border-slate-200/80 bg-stone-50/90 p-5;
+  }
+
+  .docs-mode-card {
+    @apply rounded-3xl border border-white/70 bg-white/80 p-6 shadow-[0_20px_50px_-28px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1;
+  }
+
   .docs-prose {
     @apply prose prose-slate max-w-none text-[1.04rem] leading-8;
   }

@@ -1,55 +1,42 @@
 <script setup lang="ts">
+import { commonTaskPaths, docsModes, getDocTypeMeta, webAppPath } from '~/utils/docs'
+
 useSeoMeta({
   title: 'GCP Atlas',
-  description: 'Open-source Google Cloud documentation focused on plain language, real tasks, and production-aware examples.'
+  description: 'Open-source Google Cloud documentation organized by how people actually learn: tutorial, how-to, explanation, and reference.'
 })
 
-const pillars = [
-  {
-    title: 'Task-first guides',
-    body: 'Learn by shipping real workloads, not by reading product marketing pages.',
-    icon: 'lucide:map'
-  },
-  {
-    title: 'Opinionated architectures',
-    body: 'Show the tradeoffs, failure points, and costs before a team commits to a design.',
-    icon: 'lucide:git-branch'
-  },
-  {
-    title: 'Production-aware quickstarts',
-    body: 'Every tutorial starts small, then explains what needs to change before going live.',
-    icon: 'lucide:rocket'
-  }
-]
+const { data: catalog } = await useAsyncData(
+  'home-docs-catalog',
+  () => queryCollection('docs').select('path', 'title', 'description', 'docType').all()
+)
 
-const tracks = [
-  {
-    title: 'Start Here',
-    body: 'The shortest path from zero to understanding projects, billing, IAM, and regions.',
-    to: '/docs/start-here',
-    icon: 'lucide:flag'
-  },
-  {
-    title: 'Core Concepts',
-    body: 'Plain-English explanations of identity, networking, storage, and observability.',
-    to: '/docs/core-concepts',
-    icon: 'lucide:key-round'
-  },
-  {
-    title: 'Products',
-    body: 'Actionable guides for Cloud Run, Cloud Storage, Cloud SQL, and the services teams actually use.',
-    to: '/docs/products',
-    icon: 'lucide:boxes'
-  }
-]
+const pagesByPath = computed(
+  () => new Map((catalog.value ?? []).map((entry) => [entry.path, entry]))
+)
 
-const quickLinks = [
-  { label: 'What is GCP?', to: '/docs/start-here/what-is-gcp' },
-  { label: 'GCP for web apps', to: '/docs/start-here/gcp-for-web-apps' },
-  { label: 'IAM basics', to: '/docs/core-concepts/iam-basics' },
-  { label: 'Cloud Run guide', to: '/docs/products/cloud-run' },
-  { label: 'Cloud Storage guide', to: '/docs/products/cloud-storage' }
-]
+const modes = computed(() =>
+  docsModes.map((mode) => ({
+    ...mode,
+    meta: getDocTypeMeta(mode.docType),
+    page: pagesByPath.value.get(mode.path)
+  }))
+)
+
+const guidedPath = computed(() =>
+  webAppPath
+    .map((step) => ({
+      ...step,
+      page: pagesByPath.value.get(step.path)
+    }))
+    .filter((step) => step.page)
+)
+
+const commonTasks = computed(() =>
+  commonTaskPaths
+    .map((path) => pagesByPath.value.get(path))
+    .filter(Boolean)
+)
 </script>
 
 <template>
@@ -59,10 +46,10 @@ const quickLinks = [
         <div class="px-6 py-8 sm:px-10 sm:py-12">
           <p class="docs-kicker">Open-source GCP docs</p>
           <h1 class="mt-4 max-w-4xl font-serif text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl">
-            Google Cloud docs that make sense the first time.
+            GCP docs organized by how people actually think.
           </h1>
           <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            GCP Atlas is a Nuxt-based documentation site for people who need plain language, fast answers, and working examples instead of maze-like product pages.
+            Stop forcing beginners through product menus. Start with the kind of help they need: a tutorial, a task guide, an explanation, or a fast reference page.
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3">
@@ -73,42 +60,58 @@ const quickLinks = [
               Start reading
             </NuxtLink>
             <NuxtLink
-              to="/docs/start-here/gcp-for-web-apps"
+              to="/docs/learn/ship-your-first-web-app-on-gcp"
               class="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-atlas-400 hover:text-atlas-800"
             >
-              Follow the web app path
+              Start with the tutorial
             </NuxtLink>
           </div>
         </div>
 
         <div class="grid gap-px border-t border-white/70 bg-white/70 md:grid-cols-3">
-          <div
-            v-for="pillar in pillars"
-            :key="pillar.title"
-            class="bg-white/70 px-6 py-6"
-          >
+          <div class="bg-white/70 px-6 py-6">
             <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-atlas-100 text-atlas-800">
-              <Icon :name="pillar.icon" class="text-xl" />
+              <Icon name="lucide:compass" class="text-xl" />
             </div>
-            <h2 class="mt-4 text-lg font-semibold tracking-tight text-slate-950">{{ pillar.title }}</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600">{{ pillar.body }}</p>
+            <h2 class="mt-4 text-lg font-semibold tracking-tight text-slate-950">Choose the right page type</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Great docs stop guessing. They route the reader to the right format first.
+            </p>
+          </div>
+          <div class="bg-white/70 px-6 py-6">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-signal-100 text-signal-800">
+              <Icon name="lucide:route" class="text-xl" />
+            </div>
+            <h2 class="mt-4 text-lg font-semibold tracking-tight text-slate-950">Teach with one path</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Tutorials should be journeys, not catalogs of services or options.
+            </p>
+          </div>
+          <div class="bg-white/70 px-6 py-6">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-800">
+              <Icon name="lucide:messages-square" class="text-xl" />
+            </div>
+            <h2 class="mt-4 text-lg font-semibold tracking-tight text-slate-950">Explain before you optimize</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              The hard part of GCP is usually the mental model, not the command syntax.
+            </p>
           </div>
         </div>
       </div>
 
       <aside class="surface-panel p-6 sm:p-7">
-        <p class="docs-kicker">Quickstart map</p>
-        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Read these first</h2>
+        <p class="docs-kicker">Web app path</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Start here if you are shipping</h2>
         <ul class="mt-6 space-y-3">
           <li
-            v-for="link in quickLinks"
-            :key="link.to"
+            v-for="step in guidedPath"
+            :key="step.path"
           >
             <NuxtLink
-              :to="link.to"
+              :to="step.path"
               class="flex items-center justify-between rounded-2xl border border-slate-200 bg-stone-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-atlas-300 hover:bg-atlas-50 hover:text-slate-950"
             >
-              <span>{{ link.label }}</span>
+              <span>{{ step.page?.title }}</span>
               <Icon name="lucide:arrow-up-right" class="text-base" />
             </NuxtLink>
           </li>
@@ -116,47 +119,77 @@ const quickLinks = [
       </aside>
     </section>
 
-    <section class="mt-12 grid gap-6 lg:grid-cols-3">
+    <section class="mt-12 grid gap-6 lg:grid-cols-2 xl:grid-cols-4">
       <NuxtLink
-        v-for="track in tracks"
-        :key="track.title"
-        :to="track.to"
-        class="surface-panel group p-6 transition hover:-translate-y-1"
+        v-for="mode in modes"
+        :key="mode.path"
+        :to="mode.path"
+        class="docs-mode-card group"
       >
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-signal-100 text-signal-700">
-          <Icon :name="track.icon" class="text-xl" />
+        <div class="flex h-12 w-12 items-center justify-center rounded-2xl" :class="mode.meta.iconClass">
+          <Icon :name="mode.meta.icon" class="text-xl" />
         </div>
-        <h2 class="mt-5 text-2xl font-semibold tracking-tight text-slate-950">{{ track.title }}</h2>
-        <p class="mt-3 text-sm leading-6 text-slate-600">{{ track.body }}</p>
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+          <span class="docs-chip text-xs" :class="mode.meta.badgeClass">{{ mode.meta.label }}</span>
+        </div>
+        <h2 class="mt-4 text-2xl font-semibold tracking-tight text-slate-950">{{ mode.title }}</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-600">{{ mode.page?.description || mode.summary }}</p>
         <div class="mt-5 flex items-center gap-2 text-sm font-semibold text-atlas-700">
-          Open section
+          Open this mode
           <Icon name="lucide:arrow-right" class="text-base transition group-hover:translate-x-1" />
         </div>
       </NuxtLink>
     </section>
 
-    <section class="mt-12 surface-panel overflow-hidden">
-      <div class="grid gap-px bg-white/70 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <div class="bg-white/70 px-6 py-8 sm:px-8">
-          <p class="docs-kicker">Why this project exists</p>
-          <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-            The goal is not to copy the official docs.
-          </h2>
-          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            The goal is to make cloud decisions easier. That means shorter explanations, stronger opinions, clearer architecture guidance, and fewer pages that assume the reader already knows GCP vocabulary.
-          </p>
-        </div>
-
-        <div class="bg-slate-950 px-6 py-8 text-slate-100 sm:px-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Current foundation</p>
-          <ul class="mt-5 space-y-4 text-sm leading-6 text-slate-300">
-            <li>Nuxt 4 app shell</li>
-            <li>Tailwind CSS styling system</li>
-            <li>Nuxt Content markdown workflow</li>
-            <li>Starter docs for the first learning path</li>
-          </ul>
+    <section class="mt-12 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div class="surface-panel px-6 py-8 sm:px-8">
+        <p class="docs-kicker">Why this structure works</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
+          GCP stops feeling mysterious when the docs stop mixing jobs.
+        </h2>
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <div class="docs-note-card">
+            <p class="font-semibold text-slate-950">Tutorials</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Teach one path from start to finish. They are not the place for exhaustive options.
+            </p>
+          </div>
+          <div class="docs-note-card">
+            <p class="font-semibold text-slate-950">How-to guides</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Solve one task fast. They assume you know the goal and need the execution steps.
+            </p>
+          </div>
+          <div class="docs-note-card">
+            <p class="font-semibold text-slate-950">Explanations</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Build the mental model. This is where IAM, projects, and service boundaries become clear.
+            </p>
+          </div>
+          <div class="docs-note-card">
+            <p class="font-semibold text-slate-950">Reference</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Give short, exact answers. Use these pages when the concept is already familiar.
+            </p>
+          </div>
         </div>
       </div>
+
+      <aside class="surface-panel p-6 sm:p-7">
+        <p class="docs-kicker">Common entry points</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Useful right now</h2>
+        <ul class="mt-6 space-y-3">
+          <li v-for="task in commonTasks" :key="task?.path">
+            <NuxtLink
+              :to="task?.path"
+              class="flex items-center justify-between rounded-2xl border border-slate-200 bg-stone-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-atlas-300 hover:bg-atlas-50 hover:text-slate-950"
+            >
+              <span>{{ task?.title }}</span>
+              <Icon name="lucide:arrow-up-right" class="text-base" />
+            </NuxtLink>
+          </li>
+        </ul>
+      </aside>
     </section>
   </div>
 </template>

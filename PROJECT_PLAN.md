@@ -2,424 +2,249 @@
 
 ## Goal
 
-Build an open-source documentation site for Google Cloud Platform that is easier to learn than the official docs for:
+Build open-source Google Cloud documentation that is easier to understand than the official docs by fixing the two main failure modes of cloud docs:
 
-- beginners
-- developers moving from AWS or Azure
-- startup teams shipping fast
-- engineers who want copy-paste working examples
+- too many product pages before the reader has a mental model
+- too many page types mixed together in one navigation system
 
-The core idea is simple:
+This project should feel clearer because it routes the reader to the right kind of page first.
 
-- explain cloud concepts in plain language
-- organize docs by real tasks, not by product marketing
-- show architecture, tradeoffs, pricing impact, and failure cases early
-- make every page actionable in under 5 minutes
+## Core Product Bet
+
+The best documentation systems on the internet do not win by looking pretty. They win by separating different documentation jobs.
+
+This project should follow a four-part system:
+
+1. Tutorial
+2. How-to
+3. Explanation
+4. Reference
+
+That means:
+
+- tutorials teach by building
+- how-to guides solve one task
+- explanation pages make the platform make sense
+- reference pages answer fast
 
 ## Product Principles
 
-Every page should answer these questions fast:
+Every important page should answer one clear job.
 
-1. What is this?
-2. When should I use it?
-3. When should I not use it?
-4. What does the smallest working example look like?
-5. What will it cost or break if I choose it?
+Rules:
 
-Writing rules:
-
-- use plain English first, then introduce Google terminology
-- explain acronyms on first use
-- start with an opinionated quick answer before deep detail
-- prefer examples and diagrams over long paragraphs
-- include a "Common mistakes" section on major pages
-- include migration notes for users coming from AWS and Azure where relevant
+- never mix tutorial and reference goals on the same page
+- start from user intent, not product taxonomy
+- prefer one good path over ten equal options
+- explain tradeoffs early
+- keep examples small and realistic
+- make "what to read next" obvious
 
 ## Audience
 
 Primary audience:
 
-- junior to mid-level developers
-- founders and small teams
-- full-stack engineers using GCP for the first time
+- developers new to GCP
+- startup teams shipping fast
+- full-stack engineers moving from simpler hosting platforms
+- developers moving from AWS or Azure who want the GCP mental model quickly
 
 Secondary audience:
 
-- DevOps engineers comparing services
-- teams preparing for production or compliance
+- DevOps engineers comparing GCP service choices
+- teams preparing for production hardening
 
 ## Information Architecture
 
-The site should not mirror the official Google Cloud navigation. It should be task-first.
+The site should not be organized like Google Cloud's internal product map.
 
-Top-level sections:
+It should be organized like a good documentation system:
 
-1. Start Here
-2. Core Concepts
-3. Products
-4. Architectures
-5. Tutorials
-6. Best Practices
-7. Cost Guides
-8. Troubleshooting
-9. Glossary
+### 1. Learn by Building
 
-Recommended content under each section:
+Use for guided tutorials.
 
-### Start Here
+Examples:
 
-- What is GCP?
-- How GCP is organized: projects, billing, IAM, regions
-- Best first services to learn
-- GCP learning path for web apps
-- GCP learning path for AI apps
+- ship your first web app on GCP
+- first event-driven service on GCP
+- first internal admin tool on GCP
 
-### Core Concepts
+### 2. Solve a Specific Task
 
-- IAM
-- networking
-- storage
-- compute
-- observability
-- security
-- deployment models
+Use for short execution guides.
 
-### Products
+Examples:
 
-Group by function, not by Google org chart:
+- deploy to Cloud Run
+- store uploads in Cloud Storage
+- connect a service to Secret Manager
+- expose a service privately
 
-- compute: Cloud Run, GKE, Compute Engine, App Engine
-- storage: Cloud Storage, Filestore, Persistent Disk
-- databases: Cloud SQL, Firestore, Spanner, Bigtable, Memorystore
-- messaging: Pub/Sub, Eventarc
-- data: BigQuery, Dataflow, Dataproc
-- AI: Vertex AI, embeddings, model hosting
-- identity and security: IAM, Secret Manager, KMS, Armor
+### 3. Understand the Platform
 
-Each product page should include:
+Use for mental models and tradeoffs.
 
-- one-sentence summary
-- best use cases
-- avoid if
-- mental model
-- hello world
-- production checklist
-- pricing notes
-- alternatives inside GCP
-- AWS/Azure equivalents
+Examples:
 
-### Architectures
+- how GCP is organized
+- IAM in plain English
+- when Cloud Run is enough and when it is not
+- regions, projects, and identities
 
-This section is the main differentiator.
+### 4. Look Up Facts Fast
 
-Example architecture guides:
+Use for concise service reference.
 
-- static site on Cloud Run + CDN
-- SaaS app on Cloud Run + Cloud SQL + Redis
-- event-driven pipeline with Pub/Sub + Cloud Run
-- file upload processing pipeline
-- RAG app with Vertex AI + Cloud Storage + vector store
-- internal admin app with Identity-Aware Proxy
+Examples:
 
-Each architecture page should include:
-
-- diagram
-- why this design
-- request flow
-- failure points
-- scaling limits
-- expected cost shape
-- deployment steps
-
-### Tutorials
-
-Tutorials should be short, opinionated, and production-aware.
-
-Template:
-
-- what you will build
-- prerequisites
-- 10-minute quickstart
-- explain what just happened
-- production hardening
-- next improvements
-
-### Best Practices
-
-- security defaults
-- IAM role design
-- regional strategy
-- logging and monitoring
-- backup and disaster recovery
-- CI/CD
-- secrets management
-
-### Cost Guides
-
-- how GCP pricing works
-- low-cost startup stack
-- common billing mistakes
-- cost comparison between common service choices
-
-### Troubleshooting
-
-- Cloud Run cold start issues
-- IAM permission denied
-- VPC connectivity issues
-- Cloud SQL connection failures
-- quota errors
-
-### Glossary
-
-- plain-language definitions for common GCP terms
-
-## Content Model
-
-Use markdown-driven content with frontmatter.
-
-Recommended frontmatter fields:
-
-```yaml
-title:
-description:
-category:
-product:
-tags:
-difficulty:
-lastReviewed:
-estimatedTime:
-prerequisites:
-related:
-awsEquivalent:
-azureEquivalent:
-icon:
-summary:
-```
-
-Page blocks to standardize:
-
-- TL;DR
-- When to use
-- Avoid if
-- How it works
-- Quickstart
-- Production checklist
-- Common mistakes
-- Related guides
-
-## Technical Stack
-
-Base stack:
-
-- Nuxt 4
-- Tailwind CSS
-- Nuxt Content
-- TypeScript
-
-Recommended Nuxt modules:
-
-- `@nuxt/content` for markdown docs and collections
-- `@nuxtjs/tailwindcss` for styling
-- `@nuxt/icon` for a clean icon system
-- `@vueuse/nuxt` for small utility hooks if needed
-
-Optional later:
-
-- `@nuxtjs/seo` or equivalent SEO tooling
-- analytics
-- search provider integration
-
-## Frontend Direction
-
-Tailwind CSS should be the main frontend styling layer.
-
-Design goals:
-
-- clean and technical, but not corporate
-- stronger hierarchy than default docs sites
-- high readability on long pages
-- quick scanning on mobile
-- obvious callouts for warnings, costs, and prerequisites
-
-Tailwind usage rules:
-
-- define design tokens in Tailwind theme first
-- use semantic utility groups for docs UI patterns
-- avoid ad hoc spacing and color usage
-- build reusable components for callouts, code blocks, page headers, and step lists
-
-Recommended design tokens:
-
-- neutral text palette with strong contrast
-- one primary brand color for actions
-- one accent color for diagrams and highlights
-- dedicated warning, success, and cost colors
-
-Core UI components:
-
-- docs header
-- left navigation
-- right table of contents
-- search modal
-- breadcrumb
-- page hero
-- callout boxes
-- step-by-step tutorial block
-- architecture diagram card
-- comparison table
-- command/code snippet block
-- "Common mistakes" panel
-
-## Suggested App Structure
-
-```text
-app/
-  app.vue
-  layouts/
-    default.vue
-  pages/
-    index.vue
-    docs/[...slug].vue
-  components/
-    docs/
-    ui/
-  assets/
-    css/tailwind.css
-content/
-  start-here/
-  core-concepts/
-  products/
-  architectures/
-  tutorials/
-  best-practices/
-  cost-guides/
-  troubleshooting/
-  glossary/
-server/
-  api/
-```
-
-## MVP Scope
-
-Do not try to document all of GCP first. Start with the highest-value path.
-
-MVP content:
-
-- Start Here overview
-- IAM basics
 - Cloud Run
 - Cloud Storage
 - Cloud SQL
 - Pub/Sub
-- Vertex AI basics
-- 3 architecture guides
-- 5 tutorials
-- glossary for top 50 terms
 
-MVP product features:
+## Why This Model Wins
 
-- markdown docs rendering
-- search
-- sidebar navigation
-- table of contents
-- code copy button
-- mobile docs layout
-- dark/light theme only if it does not slow delivery
+It borrows the strongest traits from the best docs systems:
 
-## Phase Plan
+- Stripe-style task clarity
+- React-style teaching flow
+- MDN-style learning paths
+- Tailwind-style fast reference
+- Rust-style separation between different kinds of docs
 
-### Phase 1: Foundation
+The goal is not to copy any one site visually. The goal is to copy the structural discipline.
 
-- install Tailwind CSS
-- install Nuxt Content
-- create docs layout
-- create markdown collections
-- define page template and reusable components
-- replace starter page with real homepage
+## Page Design Rules
 
-### Phase 2: Core Docs
+### Tutorial pages
 
-- write Start Here section
-- write first product guides
-- add architecture pages
-- add glossary and cross-linking
+Must include:
 
-### Phase 3: Usability
+- outcome
+- assumptions
+- ordered steps
+- checkpoints
+- what this page deliberately skips
+- next steps
+
+### How-to pages
+
+Must include:
+
+- goal
+- assumptions
+- exact sequence
+- stop condition
+- common failure points
+
+### Explanation pages
+
+Must include:
+
+- plain-language mental model
+- relationship between concepts
+- common misunderstandings
+- tradeoffs
+
+### Reference pages
+
+Must include:
+
+- one-sentence summary
+- good fit
+- avoid when
+- common gotchas
+- links to the right tutorial or how-to
+
+## Content Model
+
+Use markdown with frontmatter.
+
+Recommended fields:
+
+```yaml
+title:
+description:
+docType:
+goal:
+summary:
+difficulty:
+estimatedTime:
+lastReviewed:
+bestFor:
+prerequisites:
+related:
+product:
+awsEquivalent:
+azureEquivalent:
+order:
+```
+
+## Frontend Direction
+
+The frontend should guide choice before it shows detail.
+
+That means the UI should:
+
+- ask what kind of help the reader needs
+- make tutorials, how-to guides, explanation, and reference visually distinct
+- show "use this page when" near the top
+- show prerequisites clearly
+- show next actions clearly
+
+Tailwind CSS should be used as the styling system, but the visual design should serve the information architecture rather than the other way around.
+
+## Current App Direction
+
+The Nuxt app should provide:
+
+- a homepage that starts from user intent
+- a docs index that explains the four page types
+- navigation grouped by documentation job
+- page metadata surfaced in the page chrome
+- markdown-driven content with strong internal linking
+
+## MVP Scope
+
+Do not aim for full GCP coverage.
+
+Start with the clearest first path:
+
+- one tutorial for shipping a web app
+- two explanation pages for platform structure and IAM
+- two how-to guides for deployment and storage
+- two reference pages for core services
+
+If these pages are excellent, the project has a foundation worth expanding.
+
+## Next Phases
+
+### Phase 1
+
+- finish the four-part documentation structure
+- polish navigation and page chrome
+- expand the first web app learning path
+
+### Phase 2
 
 - add search
-- add better code blocks and copy actions
-- add comparison tables
-- improve internal linking and related content
+- add Cloud SQL and Secret Manager pages in all four modes where needed
+- add architecture diagrams
 
-### Phase 4: Open Source Workflow
+### Phase 3
 
-- add contribution guide
-- define page review checklist
-- add issue templates
-- add content ownership and review labels
+- add contribution rules for doc type quality
+- add issue templates for missing tutorial, how-to, explanation, and reference pages
+- add editorial review workflow
 
-### Phase 5: Scale
+## Success Metric
 
-- add versioning strategy if needed
-- add generated diagrams
-- add benchmarks and cost calculators
-- add multilingual support if demand exists
+The project is successful if a new GCP user can answer these questions faster than they can with the official docs:
 
-## Open Source Contribution Model
+- what should I use?
+- why should I use it?
+- how do these services fit together?
+- what do I do next?
 
-To keep quality high, contributors need clear rules.
-
-Add these files early:
-
-- `CONTRIBUTING.md`
-- `docs/STYLE_GUIDE.md`
-- `.github/ISSUE_TEMPLATE/`
-- `.github/PULL_REQUEST_TEMPLATE.md`
-
-Contribution rules:
-
-- every new page must include TL;DR and Common mistakes
-- claims about pricing or limits must include a source link
-- tutorials must be tested end to end before merge
-- pages need `lastReviewed` metadata
-
-## Success Metrics
-
-Measure whether the docs are actually easier than the official docs.
-
-Key metrics:
-
-- time to first successful deployment
-- bounce rate on tutorial pages
-- search exit rate
-- average depth per session
-- percentage of pages with runnable examples
-- contributor turnaround time
-
-## First Execution Checklist
-
-The next implementation steps should be:
-
-1. Add Tailwind CSS to the Nuxt app.
-2. Add Nuxt Content and set up the `content/` directory.
-3. Build the docs layout with sidebar, top nav, and table of contents.
-4. Replace the default landing page with a real homepage.
-5. Write the first 5 core pages:
-   - What is GCP?
-   - GCP for web apps
-   - IAM basics
-   - Cloud Run guide
-   - Cloud Storage guide
-
-## Recommendation
-
-The biggest mistake would be trying to be "complete" before being useful.
-
-This project should win by being:
-
-- clearer
-- more opinionated
-- more task-focused
-- more example-driven
-
-That is how it becomes better than the official docs for most real users.
+If the docs reduce mystery, the project is on the right track.
