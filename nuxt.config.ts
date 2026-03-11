@@ -1,8 +1,10 @@
+import tailwindcss from '@tailwindcss/vite'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/content', '@nuxtjs/tailwindcss', '@nuxt/icon'],
+  modules: ['@nuxt/content', '@nuxt/icon'],
   compatibilityDate: '2025-07-15',
-  css: ['~/app/assets/css/tailwind.css'],
+  css: ['~/assets/css/tailwind.css'],
   devtools: { enabled: true },
   app: {
     head: {
@@ -14,6 +16,9 @@ export default defineNuxtConfig({
         }
       ]
     }
+  },
+  vite: {
+    plugins: [tailwindcss()]
   },
   icon: {
     serverBundle: {
