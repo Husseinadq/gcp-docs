@@ -13,12 +13,11 @@
     "@iconify-json/lucide": "^1.2.96",
     "@nuxt/content": "^3.12.0",
     "@nuxt/icon": "^2.2.1",
-    "@tailwindcss/postcss": "^4.2.1",
-    "@tailwindcss/typography": "^0.5.19",
-    "@tailwindcss/vite": "^4.2  .1",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@tailwindcss/typography": "0.5.16",
     "better-sqlite3": "^12.6.2",
     "nuxt": "^4.3.1",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "3.4.17",
     "vue": "^3.5.30",
     "vue-router": "^4.6.4"
   }
