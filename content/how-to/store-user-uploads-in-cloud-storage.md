@@ -31,42 +31,115 @@ This guide assumes:
 - files need to survive restarts and new instances
 - your application can talk to GCP services through an explicit identity
 
-## Step 1: Create one bucket with a clear purpose
+## 1. Set your variables
 
-Name the bucket around the job it serves.
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export BUCKET_NAME="${PROJECT_ID}-user-uploads"
+export SERVICE_ACCOUNT_EMAIL="app-runner@${PROJECT_ID}.iam.gserviceaccount.com"
 
-Good examples:
+gcloud config set project "$PROJECT_ID"
+```
 
-- user uploads
-- generated exports
-- public assets
+## 2. Create the bucket
 
-Do not start with a bucket that is meant to do everything.
+```bash
+gcloud storage buckets create "gs://${BUCKET_NAME}" \
+  --location="$REGION" \
+  --uniform-bucket-level-access
+```
 
-## Step 2: Decide whether the files are private or public
+## 3. Grant only object access to the workload
 
-This decision shapes the rest of the access design.
+```bash
+gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
+  --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+  --role="roles/storage.objectUser"
+```
 
-- private files usually need signed access patterns or controlled server access
-- public files need a much tighter review of what should ever become public
+That is enough for uploads without granting broad bucket admin access.
 
-## Step 3: Give the workload the right bucket access
+## 4. Install the upload dependencies
 
-The application identity should have the narrowest access that lets it do the job.
+```bash
+npm install express multer @google-cloud/storage
+```
 
-This is where many teams accidentally create future security problems by giving broad storage permissions too early.
+## 5. Add one upload route
 
-## Step 4: Store metadata separately if needed
+`server.js`
 
-Cloud Storage holds the objects well.
+```js
+import express from 'express'
+import multer from 'multer'
+import { Storage } from '@google-cloud/storage'
 
-If your product needs extra application metadata such as ownership, workflow state, or user associations, keep that in the database or application layer.
+const app = express()
+const upload = multer({ storage: multer.memoryStorage() })
+const storage = new Storage()
+const bucketName = process.env.BUCKET_NAME
+const bucket = storage.bucket(bucketName)
+const port = process.env.PORT || 8080
 
-## Step 5: Define cleanup behavior
+app.post('/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'file is required' })
+  }
 
-If uploads are temporary, add a retention or cleanup policy early.
+  const object = bucket.file(`uploads/${Date.now()}-${req.file.originalname}`)
 
-That avoids a slow cost leak and keeps old artifacts from becoming product archaeology.
+  await object.save(req.file.buffer, {
+    contentType: req.file.mimetype,
+  })
+
+  res.status(201).json({
+    bucket: bucketName,
+    object: object.name,
+  })
+})
+
+app.listen(port, () => {
+  console.log(`Listening on ${port}`)
+})
+```
+
+## 6. Run the app locally
+
+```bash
+export BUCKET_NAME="$BUCKET_NAME"
+node server.js
+```
+
+Upload a file from another terminal:
+
+```bash
+curl -X POST \
+  -F "file=@./hello.txt" \
+  http://localhost:8080/upload
+```
+
+Expected response:
+
+```json
+{"bucket":"your-project-id-user-uploads","object":"uploads/1710150000000-hello.txt"}
+```
+
+## 7. Verify the object exists
+
+```bash
+gcloud storage ls "gs://${BUCKET_NAME}/uploads/"
+```
+
+## 8. Keep metadata outside the bucket
+
+Cloud Storage should hold the file bytes.
+
+Your app or database should hold metadata such as:
+
+- which user owns the file
+- whether it is approved
+- which record points to it
 
 ## Common failure points
 
@@ -77,6 +150,14 @@ That is a design issue, not a bug in the cloud provider.
 ### Access works in one environment and fails in another
 
 That often means the wrong service account or bucket policy is attached in one project.
+
+## Stop condition
+
+You are done when:
+
+- uploads return `201`
+- the object appears in the bucket
+- the workload identity only has object-level write/read access
 
 ## What to keep open while doing this
 

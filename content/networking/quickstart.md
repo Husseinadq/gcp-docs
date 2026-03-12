@@ -23,33 +23,60 @@ related:
 
 Draw the request flow clearly enough that ingress, egress, and service boundaries stop feeling like random platform settings.
 
-## Step 1: Start with one request
+## Fast path
 
-Pick one real user or system request and trace it from the first entry point to the final dependency.
+This quickstart creates one custom VPC, one subnet, and one firewall rule so the basic networking building blocks are visible in code.
 
-## Step 2: Mark the public edge
+## 1. Set your project and names
 
-Ask which part of the system is meant to receive public traffic.
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export NETWORK="atlas-net"
+export SUBNET="atlas-us-central1"
 
-That answer should be explicit, not implied by whichever setting happened to work.
+gcloud config set project "$PROJECT_ID"
+```
 
-## Step 3: Mark internal hops
+## 2. Create a custom VPC and subnet
 
-List which services talk to each other after the request enters the system.
+```bash
+gcloud compute networks create "$NETWORK" \
+  --subnet-mode=custom \
+  --bgp-routing-mode=regional \
+  --mtu=1460
 
-Keep the sequence concrete.
+gcloud compute networks subnets create "$SUBNET" \
+  --network="$NETWORK" \
+  --region="$REGION" \
+  --range=10.10.0.0/24
+```
 
-## Step 4: Mark outbound dependencies
+## 3. Add one explicit web-ingress firewall rule
 
-Write down which external systems, APIs, or managed services the workload needs to reach.
+```bash
+gcloud compute firewall-rules create atlas-allow-http \
+  --network="$NETWORK" \
+  --allow=tcp:80,tcp:443 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=web \
+  --description="Allow web traffic to instances tagged web"
+```
 
-This is where egress decisions stop being abstract.
+## 4. Inspect what you created
 
-## Step 5: Validate the boundary
+```bash
+gcloud compute networks subnets list \
+  --filter="network:${NETWORK}"
 
-The team should be able to explain:
+gcloud compute firewall-rules list \
+  --filter="network:${NETWORK}"
+```
 
-- what is public
-- what is private
-- what each service can reach
-- where failures are visible
+## What this should teach you
+
+- the VPC is the network boundary
+- the subnet is the IP range inside that boundary
+- the firewall rule is the explicit statement of what traffic is allowed
+
+That is enough structure to stop talking about networking as magic and start talking about concrete request paths.

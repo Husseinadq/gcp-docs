@@ -26,36 +26,76 @@ related:
 
 Move file data into Cloud Storage so it survives restarts, deployments, and scaling events.
 
-## Step 1: Create one bucket for one job
+## Fast path
 
-Start with a bucket purpose that is easy to explain:
+This quickstart creates one bucket, uploads one file with the CLI, and then shows the smallest useful Node.js upload snippet.
 
-- user uploads
-- public assets
-- generated exports
+## 1. Set your project and bucket name
 
-## Step 2: Decide the access pattern before code
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export BUCKET_NAME="${PROJECT_ID}-atlas-uploads"
 
-Ask whether the files should be:
+gcloud config set project "$PROJECT_ID"
+```
 
-- private
-- public
-- served through signed access
+## 2. Create a bucket
 
-That decision drives the rest of the design.
+```bash
+gcloud storage buckets create "gs://${BUCKET_NAME}" \
+  --location="$REGION"
+```
 
-## Step 3: Give the workload the narrowest useful access
+## 3. Upload one file from the CLI
 
-Avoid broad storage permissions just to make the first test pass.
+```bash
+printf 'hello from gcp atlas\n' > hello.txt
 
-Treat bucket access as part of the application design.
+gcloud storage cp ./hello.txt "gs://${BUCKET_NAME}/quickstart/hello.txt"
+gcloud storage ls "gs://${BUCKET_NAME}/quickstart/"
+```
 
-## Step 4: Keep product metadata outside the bucket
+If the upload worked, you should see `hello.txt` in the bucket listing.
 
-Cloud Storage should hold the object.
+## 4. Upload from application code
 
-Application ownership, workflow state, and user relationships usually belong in the app or database layer.
+Install the SDK:
 
-## Step 5: Define cleanup behavior early
+```bash
+npm install @google-cloud/storage
+```
 
-If files are temporary, add a lifecycle rule or cleanup process at the start instead of waiting for costs to drift.
+`upload.js`
+
+```js
+import { Storage } from '@google-cloud/storage'
+
+const storage = new Storage()
+const bucketName = process.env.BUCKET_NAME
+
+await storage.bucket(bucketName).upload('./hello.txt', {
+  destination: 'app-uploads/hello.txt'
+})
+
+console.log(`Uploaded hello.txt to gs://${bucketName}/app-uploads/hello.txt`)
+```
+
+Run it:
+
+```bash
+export BUCKET_NAME="$BUCKET_NAME"
+node upload.js
+```
+
+## 5. What this should teach you
+
+- buckets are the durable storage boundary
+- CLI uploads are useful for proving access
+- the app should upload objects, not rely on local container disk
+
+## Keep this rule in mind
+
+Cloud Storage holds the file.
+
+Your app or database should hold metadata like owner, status, and workflow state.

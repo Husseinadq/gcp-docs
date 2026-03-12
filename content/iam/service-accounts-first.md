@@ -23,24 +23,59 @@ related:
 
 Make workload identity explicit before the project accumulates broad roles and hard-to-explain access paths.
 
-## Step 1: Separate humans from workloads
+## Fast path
 
-Humans log in.
+This quickstart creates one service account, grants two narrow project roles, and shows how to inspect the result.
 
-Workloads should run as service accounts.
+## 1. Set your project and service account name
 
-## Step 2: Give each important workload its own identity
+```bash
+export PROJECT_ID="your-project-id"
+export SERVICE_ACCOUNT_NAME="app-runner"
 
-Do not let unrelated services share one vague service account if they do different jobs.
+gcloud config set project "$PROJECT_ID"
+```
 
-## Step 3: Grant narrow access for real needs
+## 2. Create the service account
 
-Attach only the roles that match what the workload actually does.
+```bash
+gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+  --description="Runs the docs workload" \
+  --display-name="app-runner"
+```
 
-## Step 4: Keep the reason visible
+Build the email address you will bind roles to:
 
-The team should be able to say why the workload needs each role.
+```bash
+export SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+echo "$SERVICE_ACCOUNT_EMAIL"
+```
 
-## Step 5: Review before widening
+## 3. Grant only the roles the workload actually needs
 
-If a permission error appears, check the identity, scope, and role choice before reaching for broader access.
+```bash
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+  --role="roles/storage.objectUser"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+  --role="roles/logging.logWriter"
+```
+
+## 4. Verify the current bindings
+
+```bash
+gcloud projects get-iam-policy "$PROJECT_ID" \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:${SERVICE_ACCOUNT_EMAIL}" \
+  --format="table(bindings.role)"
+```
+
+## What this should teach you
+
+- workloads should have their own identities
+- roles should be attached for a reason you can explain
+- broad access is usually a design smell, not a quick win
+
+If you later deploy to Cloud Run or GKE, attach this service account to the workload instead of using a vague shared identity.

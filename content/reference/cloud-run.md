@@ -23,6 +23,22 @@ related:
 
 Cloud Run is a managed way to run containerized services without taking on full Kubernetes operations.
 
+## Common commands
+
+```bash
+# deploy from source
+gcloud run deploy SERVICE --source . --region REGION
+
+# deploy from an existing image
+gcloud run deploy SERVICE --image IMAGE_URI --region REGION
+
+# get the live URL
+gcloud run services describe SERVICE --region REGION --format='value(status.url)'
+
+# check the runtime identity
+gcloud run services describe SERVICE --region REGION --format='value(spec.template.spec.serviceAccountName)'
+```
+
 ## Good fit
 
 - stateless web applications
@@ -50,11 +66,27 @@ The container should be responsible for one clear workload, not every job in the
 
 Do not treat the service filesystem as durable user storage.
 
+## Minimum deploy settings
+
+| Setting | Why it matters |
+| --- | --- |
+| Region | Controls latency, data locality, and nearby managed services |
+| Service account | Defines what the workload can reach |
+| Public vs private | Decides whether the service is internet-facing |
+| Image or source version | Gives you a deployable version you can reason about |
+| Timeout and env vars | Changes runtime behavior, not just polish |
+
 ## Common gotchas
 
 - broad IAM roles used as a shortcut
 - weak separation between web traffic and background work
 - deployment done before the region and identity decisions are explicit
+
+## Remember
+
+Cloud Run is easiest when one service does one job.
+
+As soon as a single service starts acting like a web app, queue worker, cron box, and admin shell at the same time, the design usually needs to split.
 
 ## Use with
 

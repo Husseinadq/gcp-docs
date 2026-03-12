@@ -23,22 +23,76 @@ related:
 
 Move one important workflow from direct coupling to explicit event delivery.
 
-## Step 1: Name the event clearly
+## Fast path
 
-Describe what happened in business terms, not transport terms.
+This quickstart creates one topic, one subscription, publishes one event, and shows the smallest useful Node.js consumer.
 
-## Step 2: Start with one producer and one consumer path
+## 1. Set your project and resource names
 
-Do not design for every future consumer before the first event makes sense.
+```bash
+export PROJECT_ID="your-project-id"
+export TOPIC="orders"
+export SUBSCRIPTION="orders-worker"
 
-## Step 3: Keep the consumer responsibility narrow
+gcloud config set project "$PROJECT_ID"
+gcloud services enable pubsub.googleapis.com
+```
 
-One subscriber should have one clear job when it receives the event.
+## 2. Create the topic and subscription
 
-## Step 4: Expect retries and duplicates
+```bash
+gcloud pubsub topics create "$TOPIC"
+gcloud pubsub subscriptions create "$SUBSCRIPTION" \
+  --topic="$TOPIC"
+```
 
-Consumers should be designed so the same event arriving again does not break the system.
+## 3. Publish one event
 
-## Step 5: Make ownership visible
+```bash
+gcloud pubsub topics publish "$TOPIC" \
+  --message='{"orderId":"o-1001","status":"paid"}'
+```
 
-The team should know who publishes, who subscribes, and how failure is detected.
+## 4. Pull the event from the subscription
+
+```bash
+gcloud pubsub subscriptions pull "$SUBSCRIPTION" \
+  --auto-ack \
+  --limit=1
+```
+
+If that works, your event path is real.
+
+## 5. Minimal consumer code
+
+```bash
+npm install @google-cloud/pubsub
+```
+
+`subscriber.js`
+
+```js
+import { PubSub } from '@google-cloud/pubsub'
+
+const pubsub = new PubSub()
+const subscription = pubsub.subscription(process.env.SUBSCRIPTION_NAME)
+
+subscription.on('message', (message) => {
+  console.log('message id:', message.id)
+  console.log('payload:', message.data.toString())
+  message.ack()
+})
+```
+
+Run it:
+
+```bash
+export SUBSCRIPTION_NAME="$SUBSCRIPTION"
+node subscriber.js
+```
+
+## What this should teach you
+
+- the topic is the producer boundary
+- the subscription is the consumer boundary
+- the app should be able to handle the same event more than once

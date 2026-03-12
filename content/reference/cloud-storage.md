@@ -23,6 +23,24 @@ related:
 
 Cloud Storage is the default home for durable files and objects in GCP.
 
+## Common commands
+
+```bash
+# create a bucket
+gcloud storage buckets create gs://BUCKET_NAME --location=US
+
+# upload one object
+gcloud storage cp ./file.txt gs://BUCKET_NAME/path/file.txt
+
+# list objects
+gcloud storage ls gs://BUCKET_NAME/path/
+
+# grant a workload object access at the bucket level
+gcloud storage buckets add-iam-policy-binding gs://BUCKET_NAME \
+  --member=serviceAccount:SERVICE_ACCOUNT_EMAIL \
+  --role=roles/storage.objectUser
+```
+
 ## Good fit
 
 - user uploads
@@ -50,11 +68,26 @@ Decide early whether objects are public, private, or served through signed acces
 
 If objects are temporary, define cleanup behavior from the start.
 
+## Minimum design checklist
+
+| Decision | Good default |
+| --- | --- |
+| Bucket purpose | One clear job per bucket or access model |
+| Access model | Private first, then signed or public only when needed |
+| Metadata ownership | Keep ownership and workflow state in the app or database |
+| Cleanup | Add lifecycle or deletion behavior early |
+
 ## Common gotchas
 
 - treating object keys like a traditional filesystem hierarchy
 - storing secrets in buckets
 - forgetting to design object retention and cleanup
+
+## Remember
+
+Cloud Storage solves the file problem.
+
+It does not replace application data modeling, permission design, or business metadata.
 
 ## Use with
 

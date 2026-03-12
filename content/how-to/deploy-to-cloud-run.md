@@ -32,54 +32,105 @@ This guide assumes:
 - you are not solving advanced networking yet
 - your first goal is a working managed deployment
 
-## Step 1: Decide which identity the service should run as
+## 1. Set your variables
 
-Before deployment, choose the service account for the workload.
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export REPOSITORY="app-images"
+export SERVICE="web-api"
+export IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:v1"
+export SERVICE_ACCOUNT_NAME="web-api-runner"
 
-Why this comes first:
+gcloud config set project "$PROJECT_ID"
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
+```
 
-If identity is vague, secrets access, storage access, and later debugging all become harder.
+## 2. Create the runtime service account
 
-## Step 2: Build and push the image
+```bash
+gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+  --description="Runtime identity for ${SERVICE}" \
+  --display-name="${SERVICE}"
 
-Your deployment target is not source code by itself. It is a container image.
+export SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+echo "$SERVICE_ACCOUNT_EMAIL"
+```
 
-The exact image build pipeline can vary, but the important point is that Cloud Run should receive a versioned image you can reason about.
+If the app needs storage, secrets, or database access, add only those roles next. Do not start with `Editor`.
 
-## Step 3: Deploy one service with one clear responsibility
+## 3. Create an Artifact Registry repository
 
-Keep the first service narrow.
+```bash
+gcloud artifacts repositories create "$REPOSITORY" \
+  --repository-format=docker \
+  --location="$REGION"
+```
 
-Good first examples:
+If the repository already exists, Google Cloud returns an "already exists" message. That is fine.
 
-- the main web app
-- one API
-- one internal service
+## 4. Confirm the app exposes port `8080`
 
-Bad first example:
+`Dockerfile`
 
-- mixing web traffic, background jobs, and admin tasks into one vague service
+```dockerfile
+FROM node:20-slim
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+ENV PORT=8080
+CMD ["npm", "start"]
+```
 
-## Step 4: Set the runtime configuration intentionally
+The container must listen on the `PORT` environment variable that Cloud Run provides.
 
-At minimum, check:
+## 5. Build and push the image
 
-- region
-- service account
-- environment variables and secrets
-- request timeout
-- public or private access
+```bash
+gcloud builds submit \
+  --tag "$IMAGE_URI"
+```
 
-Those are not edge settings. They define the behavior of the service.
+This gives you one versioned image you can reason about and roll forward from.
 
-## Step 5: Confirm the stop condition
+## 6. Deploy to Cloud Run
 
-Do not call the task done until:
+```bash
+gcloud run deploy "$SERVICE" \
+  --image "$IMAGE_URI" \
+  --region "$REGION" \
+  --service-account "$SERVICE_ACCOUNT_EMAIL" \
+  --allow-unauthenticated
+```
 
-- the service responds successfully
-- logs are visible
-- the correct identity is attached
-- you know the URL and the owning project
+## 7. Verify the result
+
+```bash
+SERVICE_URL="$(gcloud run services describe "$SERVICE" \
+  --region "$REGION" \
+  --format='value(status.url)')"
+
+echo "$SERVICE_URL"
+curl "$SERVICE_URL"
+```
+
+Check the attached identity:
+
+```bash
+gcloud run services describe "$SERVICE" \
+  --region "$REGION" \
+  --format='value(spec.template.spec.serviceAccountName)'
+```
+
+## 8. Read logs after the first request
+
+```bash
+gcloud logging read \
+  "resource.type=cloud_run_revision AND resource.labels.service_name=${SERVICE}" \
+  --limit=20 \
+  --format='value(textPayload)'
+```
 
 ## Common failure points
 
@@ -94,6 +145,15 @@ This is often an IAM or networking assumption problem, not a deployment failure.
 ### The service works but the structure is unclear
 
 That usually means too many responsibilities were packed into the first deployment.
+
+## Stop condition
+
+You are done when:
+
+- the service responds successfully
+- the service account is the one you intended
+- the image URI is versioned and visible
+- the logs show the running revision
 
 ## What to keep open while doing this
 

@@ -26,42 +26,102 @@ related:
 
 Deploy one containerized service cleanly enough that you can explain how it runs, who it runs as, and where it logs.
 
-## Step 1: Keep the first service narrow
+## Fast path
 
-Start with one HTTP app or one API.
+This example uses Node.js and Cloud Run source deployment so you can go from an empty folder to a live URL with one service.
 
-Do not mix web traffic, workers, admin tasks, and experiments into the first deployment.
+## 1. Set your project and service name
 
-## Step 2: Choose the runtime identity before deployment
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export SERVICE="hello-cloud-run"
 
-Create or pick the service account first.
+gcloud config set project "$PROJECT_ID"
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+```
 
-That one choice controls secrets access, storage access, and the shape of later debugging.
+## 2. Create a tiny web app
 
-## Step 3: Deploy from a versioned image
+`package.json`
 
-Treat the container image as the deployable unit.
+```json
+{
+  "name": "hello-cloud-run",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
+```
 
-The important thing is not the exact build command. The important thing is that the running version is explicit and repeatable.
+`server.js`
 
-## Step 4: Set the minimum runtime settings intentionally
+```js
+import express from 'express'
 
-Check these before calling it done:
+const app = express()
+const port = process.env.PORT || 8080
 
-- region
-- public or private access
-- request timeout
-- environment variables and secrets
-- attached service account
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'hello-cloud-run',
+    status: 'ok'
+  })
+})
 
-## Step 5: Verify the stop condition
+app.listen(port, () => {
+  console.log(`Listening on ${port}`)
+})
+```
 
-A successful deployment means:
+Install the dependency:
 
-- the service responds successfully
-- logs appear in the right project
-- the correct identity is attached
-- you know which dependencies it talks to
+```bash
+npm install
+```
+
+## 3. Deploy from source
+
+```bash
+gcloud run deploy "$SERVICE" \
+  --source . \
+  --region "$REGION" \
+  --allow-unauthenticated
+```
+
+Cloud Run builds the container for you, stores the image, and deploys one revision.
+
+## 4. Verify the deployment
+
+```bash
+SERVICE_URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
+
+echo "$SERVICE_URL"
+curl "$SERVICE_URL"
+```
+
+Expected response:
+
+```json
+{"service":"hello-cloud-run","status":"ok"}
+```
+
+## 5. What you should have now
+
+- one deployed service
+- one public URL
+- one Cloud Run revision you can inspect and roll forward from
+
+## Why this is the right first shape
+
+It is one service with one responsibility, one route, and one deploy command.
+
+That keeps Cloud Run understandable before you add secrets, storage, or a database.
 
 ## What to read next
 

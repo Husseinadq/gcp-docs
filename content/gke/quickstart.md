@@ -22,24 +22,92 @@ related:
 
 Start one GKE environment in a way that keeps the cluster understandable instead of turning it into infrastructure fog.
 
-## Step 1: Confirm the reason for Kubernetes
+## Fast path
 
-If the answer is only "we need to run a container," stop and reconsider [Cloud Run](/docs/cloud-run).
+This quickstart creates an Autopilot cluster, deploys one sample app, and exposes it with a load balancer.
 
-## Step 2: Choose the cluster model deliberately
+## 1. Set your project, region, and cluster name
 
-Make the first cluster decision explicit.
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export CLUSTER="atlas-autopilot"
 
-The team should be able to explain why this environment needs GKE and what control it is buying.
+gcloud config set project "$PROJECT_ID"
+gcloud services enable container.googleapis.com
+```
 
-## Step 3: Start with one workload path
+## 2. Create an Autopilot cluster
 
-Get one service deployed cleanly before layering in every platform concern.
+```bash
+gcloud container clusters create-auto "$CLUSTER" \
+  --location "$REGION"
+```
 
-## Step 4: Separate platform basics from app delivery
+## 3. Fetch cluster credentials
 
-Clusters, namespaces, service accounts, networking, and deployment rules are platform design, not app feature work.
+```bash
+gcloud container clusters get-credentials "$CLUSTER" \
+  --location "$REGION"
+```
 
-## Step 5: Verify operability
+## 4. Deploy one app with a manifest
 
-Before inviting more teams in, confirm that logging, ownership, and workload boundaries are clear.
+`hello-server.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-server
+  template:
+    metadata:
+      labels:
+        app: hello-server
+    spec:
+      containers:
+        - name: hello-server
+          image: us-docker.pkg.dev/google-samples/containers/gke/hello-app:1.0
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-server
+spec:
+  type: LoadBalancer
+  selector:
+    app: hello-server
+  ports:
+    - port: 80
+      targetPort: 8080
+```
+
+Apply it:
+
+```bash
+kubectl apply -f hello-server.yaml
+```
+
+## 5. Verify the rollout
+
+```bash
+kubectl get pods
+kubectl get services hello-server
+```
+
+Wait until `EXTERNAL-IP` is populated, then open the address in your browser.
+
+## What this should teach you
+
+- the cluster is the platform boundary
+- the deployment is the workload declaration
+- the service is the network entry point for the workload
+
+If that feels heavier than the problem requires, use [Cloud Run](/docs/cloud-run) instead.

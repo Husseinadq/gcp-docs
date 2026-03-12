@@ -32,6 +32,132 @@ By the end of this tutorial, you should understand a simple and useful first GCP
 
 That is enough to teach the core platform shape without drowning you in options.
 
+## Fast path
+
+This tutorial gives you one small but real stack:
+
+- one Cloud Run service
+- one Cloud Storage bucket
+- one runtime service account
+
+## 1. Set your project and enable the core APIs
+
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+export SERVICE="starter-web"
+export BUCKET_NAME="${PROJECT_ID}-starter-files"
+export SERVICE_ACCOUNT_NAME="starter-web"
+
+gcloud config set project "$PROJECT_ID"
+gcloud services enable \
+  run.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudbuild.googleapis.com \
+  storage.googleapis.com \
+  iam.googleapis.com
+```
+
+## 2. Create the runtime identity
+
+```bash
+gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+  --description="Runtime identity for the starter web app" \
+  --display-name="starter-web"
+
+export SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+```
+
+## 3. Create the uploads bucket
+
+```bash
+gcloud storage buckets create "gs://${BUCKET_NAME}" \
+  --location="$REGION" \
+  --uniform-bucket-level-access
+
+gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
+  --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+  --role="roles/storage.objectUser"
+```
+
+At this point the mental model is already visible:
+
+- the project is the boundary
+- the service account is the workload identity
+- the bucket is the file boundary
+- Cloud Run will be the request boundary
+
+## 4. Create one tiny app
+
+`package.json`
+
+```json
+{
+  "name": "starter-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
+```
+
+`server.js`
+
+```js
+import express from 'express'
+
+const app = express()
+const port = process.env.PORT || 8080
+
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'starter-web',
+    uploadsBucket: process.env.BUCKET_NAME,
+    status: 'ok'
+  })
+})
+
+app.listen(port, () => {
+  console.log(`Listening on ${port}`)
+})
+```
+
+Install the dependency:
+
+```bash
+npm install
+```
+
+## 5. Deploy the app
+
+```bash
+gcloud run deploy "$SERVICE" \
+  --source . \
+  --region "$REGION" \
+  --service-account "$SERVICE_ACCOUNT_EMAIL" \
+  --set-env-vars "BUCKET_NAME=${BUCKET_NAME}" \
+  --allow-unauthenticated
+```
+
+## 6. Verify the stack
+
+```bash
+SERVICE_URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
+
+curl "$SERVICE_URL"
+gcloud storage ls "gs://${BUCKET_NAME}"
+```
+
+Expected response shape:
+
+```json
+{"service":"starter-web","uploadsBucket":"your-project-id-starter-files","status":"ok"}
+```
+
 ## Why this tutorial uses so few services
 
 The goal of a tutorial is not to prove how many GCP products exist.
@@ -45,65 +171,16 @@ The goal is to create a stable mental model:
 
 Once that clicks, the rest of GCP gets easier.
 
-## Step 1: Create a clean project boundary
+## Checkpoints
 
-Create one project for the workload you are learning.
+You should now be able to explain:
 
-Why:
+- which project owns the stack
+- which service account the app runs as
+- which bucket holds files
+- which Cloud Run service receives traffic
 
-- it gives you a clean billing boundary
-- it isolates IAM decisions
-- it keeps logs, services, and secrets in one place
-
-Checkpoint:
-
-You should be able to say which project contains your app and which billing account pays for it.
-
-## Step 2: Pick the runtime first
-
-Use Cloud Run as the runtime for this tutorial.
-
-Why:
-
-- it removes most infrastructure setup
-- it fits the web app request/response model well
-- it teaches managed deployment without forcing Kubernetes knowledge
-
-Checkpoint:
-
-You understand that your app is packaged as a container and served through Cloud Run.
-
-## Step 3: Keep files out of the app container
-
-Use Cloud Storage for user uploads, generated exports, and assets that do not belong in your application image.
-
-Why:
-
-- local container disk is not the right place for durable user files
-- object storage is easier to reason about than database blobs for most teams
-
-Checkpoint:
-
-You know which data belongs in the app runtime and which data belongs in object storage.
-
-## Step 4: Treat access as part of the architecture
-
-Before deploying, decide which identity the app will use.
-
-The minimum useful rule is:
-
-- humans get human access
-- workloads get service accounts
-
-Why:
-
-This is the point where many GCP beginners get lost. They treat permissions like a later cleanup task, then everything feels random when access errors begin.
-
-Checkpoint:
-
-You can describe which service account your workload should run as and what it needs to access.
-
-## Step 5: Move from learning to execution
+## Move from learning to execution
 
 Once the mental model is clear, stop reading tutorials and switch to task guides.
 

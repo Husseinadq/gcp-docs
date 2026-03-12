@@ -23,26 +23,81 @@ related:
 
 Ship one AI-backed workflow where the input, output, and success criteria are explicit.
 
-## Step 1: Define the product problem first
+## Fast path
 
-Start with the user action you want to improve.
+This quickstart enables Vertex AI, sends one prompt with the Google Gen AI SDK, and shows the equivalent REST request.
 
-Do not start with model shopping.
+## 1. Set your project and model
 
-## Step 2: Keep the first workflow narrow
+```bash
+export PROJECT_ID="your-project-id"
+export LOCATION="global"
+export MODEL="gemini-2.5-flash"
 
-Choose one prompt, one retrieval path, or one classification/generation task.
+gcloud config set project "$PROJECT_ID"
+gcloud services enable aiplatform.googleapis.com
+```
 
-## Step 3: Make data access explicit
+## 2. Install the SDK
 
-Know where the input comes from, what context is attached, and what output must be stored or reviewed.
+```bash
+pip install google-genai
+```
 
-## Step 4: Add evaluation before scale
+## 3. Send one prompt with Python
 
-The first production question is not only "does it respond?"
+`prompt.py`
 
-It is "how do we know the response is good enough?"
+```python
+from google import genai
+from google.genai.types import HttpOptions
 
-## Step 5: Keep ownership clear
+client = genai.Client(
+    vertexai=True,
+    project="YOUR_PROJECT_ID",
+    location="global",
+    http_options=HttpOptions(api_version="v1"),
+)
 
-The team should know who owns prompts, model choices, safety checks, and failure review.
+response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="Write a one-sentence summary of why Cloud Run is useful.",
+)
+
+print(response.text)
+```
+
+Run it:
+
+```bash
+python prompt.py
+```
+
+## 4. Equivalent REST request
+
+```bash
+ACCESS_TOKEN="$(gcloud auth print-access-token)"
+
+curl -X POST \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  -H "Content-Type: application/json; charset=utf-8" \
+  "https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL}:generateContent" \
+  -d '{
+    "contents": [
+      {
+        "role": "USER",
+        "parts": [
+          {
+            "text": "Write a one-sentence summary of why Cloud Run is useful."
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+## What this should teach you
+
+- the project and location are part of the model call
+- you should prove one workflow with one prompt before building a larger feature
+- the model response is only step one; evaluation still matters before launch

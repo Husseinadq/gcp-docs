@@ -23,28 +23,69 @@ related:
 
 Put one meaningful dataset into BigQuery and answer one real analytical question with it.
 
-## Step 1: Start with the question, not the warehouse
+## Fast path
 
-Define the reporting or analysis outcome first.
+This quickstart creates one dataset, loads one small CSV file, and runs one query that proves the analytics path works.
 
-If the team cannot name the question, the data pipeline is too early.
+## 1. Set your project and dataset name
 
-## Step 2: Create one dataset for one domain
+```bash
+export PROJECT_ID="your-project-id"
+export DATASET="atlas_demo"
 
-Keep the first dataset tied to a clear business or product boundary.
+gcloud config set project "$PROJECT_ID"
+gcloud services enable bigquery.googleapis.com
+```
 
-## Step 3: Load one source of truth
+## 2. Create the dataset
 
-Start with one event stream, export, or structured data source you can explain end to end.
+```bash
+bq --location=US mk --dataset "$DATASET"
+```
 
-## Step 4: Write one query that proves the model
+## 3. Create a tiny CSV file
 
-The first success condition is not "BigQuery exists."
+```bash
+cat > events.csv <<'EOF'
+signup,emea,14
+signup,na,22
+purchase,emea,8
+purchase,na,11
+EOF
+```
 
-It is "we can answer a useful analytics question."
+## 4. Load the file into BigQuery
 
-## Step 5: Separate analytics from transactions
+```bash
+bq load \
+  "$DATASET.events" \
+  ./events.csv \
+  event_name:string,region:string,total:integer
+```
 
-Do not treat BigQuery as the main application database.
+## 5. Run one query that answers a real question
 
-Keep operational writes and analytical reads as different jobs.
+```bash
+bq query --use_legacy_sql=false \
+  "SELECT region, SUM(total) AS total
+   FROM \`${PROJECT_ID}.${DATASET}.events\`
+   GROUP BY region
+   ORDER BY total DESC"
+```
+
+Expected result:
+
+```text
++--------+-------+
+| region | total |
++--------+-------+
+| na     |    33 |
+| emea   |    22 |
++--------+-------+
+```
+
+## What this should teach you
+
+- BigQuery is for analytical questions over stored datasets
+- loading data and querying data are separate steps
+- this is not the same job as your application database
