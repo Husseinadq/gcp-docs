@@ -14,7 +14,8 @@ bestFor:
   - Teams hardening a first deployment
 related:
   - /docs/cloud-run/quickstart
-  - /docs/cloud-run/when-cloud-run-fits
+  - /docs/cloud-run/common-commands
+  - /docs/cloud-run/private-services
 ---
 
 ## Deployment checklist

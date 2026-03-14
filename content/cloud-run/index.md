@@ -14,8 +14,8 @@ bestFor:
   - Event handlers
 related:
   - /docs/cloud-run/quickstart
-  - /docs/cloud-run/when-cloud-run-fits
-  - /docs/cloud-run/production-checklist
+  - /docs/cloud-run/deploy-from-image
+  - /docs/cloud-run/common-commands
 ---
 
 ## TL;DR
@@ -42,9 +42,9 @@ It is strongest when:
 
 ## Fastest starting path
 
-1. Learn the platform shape in [Ship Your First Web App on GCP](/docs/learn/ship-your-first-web-app-on-gcp).
-2. Use [Deploy to Cloud Run](/docs/how-to/deploy-to-cloud-run) for the first real deployment.
-3. Keep [Cloud Run reference](/docs/reference/cloud-run) open for fast decisions.
+1. Use [Cloud Run quickstart](/docs/cloud-run/quickstart) to get the first service live.
+2. Use [Deploy from a container image](/docs/cloud-run/deploy-from-image) when the app is already Dockerized.
+3. Keep [Common commands](/docs/cloud-run/common-commands) open while you work.
 
 ## Common jobs
 
@@ -65,6 +65,6 @@ Choose Compute Engine when the workload truly needs VM-level control. Otherwise 
 
 ## Read next
 
-- [Deploy to Cloud Run](/docs/how-to/deploy-to-cloud-run)
-- [Cloud Run](/docs/reference/cloud-run)
-- [How GCP Is Organized](/docs/explain/how-gcp-is-organized)
+- [Deploy from a container image](/docs/cloud-run/deploy-from-image)
+- [Run a private service](/docs/cloud-run/private-services)
+- [Common commands](/docs/cloud-run/common-commands)

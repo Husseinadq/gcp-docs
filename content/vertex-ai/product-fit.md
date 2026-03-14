@@ -34,3 +34,25 @@ related:
 What exact user step becomes better because a model is involved?
 
 If that answer is weak, the architecture is not ready yet.
+
+## Good first AI workflows
+
+- summarize support tickets before a human reads them
+- classify incoming requests into a small set of actions
+- draft content with a human review step
+
+## Weak first AI workflows
+
+- "add chat somewhere"
+- "make the app smarter"
+- "replace half the product with a prompt"
+
+## Minimum feature rubric
+
+| Question | Good answer |
+| --- | --- |
+| What triggers the model call? | One clear user or system action |
+| What goes in? | Explicit input and context |
+| What comes out? | Structured text or a bounded action |
+| How do you judge success? | A measurable output quality check |
+| What happens on failure? | Fallback, retry, or human review |

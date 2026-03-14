@@ -14,7 +14,8 @@ bestFor:
   - Beginners choosing a first compute service
 related:
   - /docs/cloud-run/quickstart
-  - /docs/cloud-run/production-checklist
+  - /docs/cloud-run/deploy-from-image
+  - /docs/cloud-run/revision-model
   - /docs/gke
 ---
 

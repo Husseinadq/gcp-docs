@@ -22,6 +22,12 @@ related:
 
 GKE is valuable when Kubernetes is part of the solution, not when the team only wants a place to deploy code.
 
+## Use GKE when one of these is true
+
+- you need Kubernetes primitives directly
+- many workloads share one platform model and one operations team
+- the team already debugs Kubernetes faster than it learns a new runtime abstraction
+
 ## Good reasons to use GKE
 
 - the team already operates Kubernetes well
@@ -39,3 +45,22 @@ GKE is valuable when Kubernetes is part of the solution, not when the team only 
 GKE gives you more control because it gives you more things to own.
 
 That is a feature only when the workload benefits from that ownership.
+
+## Smallest useful cluster shape
+
+```text
+one cluster
+  -> one namespace for the app team
+  -> one ingress path
+  -> one workload identity model
+```
+
+If the first design needs five namespaces, three ingress choices, and cluster-level policy debates before one app is live, it is too big for a first cluster.
+
+## Fast comparison
+
+| If you need... | Start with... |
+| --- | --- |
+| one or a few HTTP services | Cloud Run |
+| Kubernetes APIs and cluster control | GKE |
+| VM-level control without Kubernetes | Compute Engine |

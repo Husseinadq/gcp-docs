@@ -96,11 +96,27 @@
   }
 
   .docs-prose :where(pre) {
-    @apply rounded-3xl border border-slate-900/90 bg-slate-950 px-5 py-5 text-slate-100 shadow-none;
+    @apply overflow-x-auto rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5 text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)];
   }
 
   .docs-prose :where(pre code) {
-    @apply bg-transparent p-0 text-[0.92rem] text-inherit;
+    @apply bg-transparent p-0 text-[0.95rem] leading-7 text-inherit;
+  }
+
+  .docs-prose :where(pre::-webkit-scrollbar) {
+    height: 0.8rem;
+  }
+
+  .docs-prose :where(pre::-webkit-scrollbar-track) {
+    @apply bg-slate-100;
+  }
+
+  .docs-prose :where(pre::-webkit-scrollbar-thumb) {
+    @apply rounded-full bg-slate-300;
+  }
+
+  .docs-prose :where(pre::-webkit-scrollbar-thumb:hover) {
+    @apply bg-slate-400;
   }
 
   .docs-prose :where(blockquote) {

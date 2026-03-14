@@ -18,8 +18,9 @@ prerequisites:
   - A containerized app that runs locally
   - Permission to deploy Cloud Run services
 related:
-  - /docs/cloud-run/when-cloud-run-fits
-  - /docs/cloud-run/production-checklist
+  - /docs/cloud-run/deploy-from-image
+  - /docs/cloud-run/revision-model
+  - /docs/cloud-run/common-commands
 ---
 
 ## Goal
@@ -125,5 +126,6 @@ That keeps Cloud Run understandable before you add secrets, storage, or a databa
 
 ## What to read next
 
-- [When Cloud Run fits](/docs/cloud-run/when-cloud-run-fits)
-- [Cloud Run production checklist](/docs/cloud-run/production-checklist)
+- [Deploy from a container image](/docs/cloud-run/deploy-from-image)
+- [Revision model](/docs/cloud-run/revision-model)
+- [Common commands](/docs/cloud-run/common-commands)

@@ -23,6 +23,18 @@ With Pub/Sub, the producer says an event happened.
 
 It does not wait for every consumer to finish the rest of the business process.
 
+## Smallest useful event shape
+
+```json
+{
+  "eventType": "order.paid",
+  "orderId": "o-1001",
+  "occurredAt": "2026-03-12T10:00:00Z"
+}
+```
+
+That is better than an event named after infrastructure or a vague verb like `updated`.
+
 ## Why this matters
 
 That separation can make systems more resilient and more scalable, but only if the event meaning is clear.
@@ -36,3 +48,11 @@ That produces a system where nobody is sure what each event means or who owns th
 ## The design question to keep asking
 
 If this event arrives late, twice, or out of order, does the system still make sense?
+
+## When not to use Pub/Sub
+
+Start with direct calls instead if:
+
+- one service immediately needs one answer from another
+- the workflow is still simple and synchronous
+- the team cannot explain who should own retries and duplicates

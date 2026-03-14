@@ -14,7 +14,8 @@ bestFor:
   - Production readiness checks
 related:
   - /docs/cloud-storage/quickstart
-  - /docs/cloud-storage/access-patterns
+  - /docs/cloud-storage/object-lifecycle
+  - /docs/cloud-storage/common-commands
 ---
 
 ## Bucket checklist

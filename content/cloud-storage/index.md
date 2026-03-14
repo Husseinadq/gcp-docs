@@ -14,8 +14,8 @@ bestFor:
   - Generated reports
 related:
   - /docs/cloud-storage/quickstart
-  - /docs/cloud-storage/access-patterns
-  - /docs/cloud-storage/bucket-checklist
+  - /docs/cloud-storage/uploads-from-node-service
+  - /docs/cloud-storage/common-commands
 ---
 
 ## TL;DR
@@ -39,9 +39,9 @@ If the data behaves like a file instead of a database row, Cloud Storage is usua
 
 ## Fastest starting path
 
-1. Keep durable files out of the runtime.
-2. Use [Store User Uploads in Cloud Storage](/docs/how-to/store-user-uploads-in-cloud-storage) for the task flow.
-3. Use [Cloud Storage reference](/docs/reference/cloud-storage) for quick decisions and gotchas.
+1. Use [Cloud Storage quickstart](/docs/cloud-storage/quickstart) to prove the bucket and object flow.
+2. Use [Uploads from a Node service](/docs/cloud-storage/uploads-from-node-service) for the first real backend upload path.
+3. Keep [Common commands](/docs/cloud-storage/common-commands) open while you work.
 
 ## Common jobs
 
@@ -62,6 +62,6 @@ Local container storage is not durable application storage. Use Cloud Storage wh
 
 ## Read next
 
-- [Store User Uploads in Cloud Storage](/docs/how-to/store-user-uploads-in-cloud-storage)
-- [Cloud Storage](/docs/reference/cloud-storage)
-- [Cloud Run](/docs/cloud-run)
+- [Uploads from a Node service](/docs/cloud-storage/uploads-from-node-service)
+- [Signed URLs for browser uploads](/docs/cloud-storage/signed-urls)
+- [Common commands](/docs/cloud-storage/common-commands)

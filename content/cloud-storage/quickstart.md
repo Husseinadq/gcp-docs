@@ -18,8 +18,9 @@ prerequisites:
   - Permission to create or use a bucket
   - An app or workload that needs durable object storage
 related:
-  - /docs/cloud-storage/access-patterns
-  - /docs/cloud-storage/bucket-checklist
+  - /docs/cloud-storage/uploads-from-node-service
+  - /docs/cloud-storage/signed-urls
+  - /docs/cloud-storage/common-commands
 ---
 
 ## Goal

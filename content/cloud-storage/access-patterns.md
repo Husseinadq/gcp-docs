@@ -14,7 +14,8 @@ bestFor:
   - Static asset decisions
 related:
   - /docs/cloud-storage/quickstart
-  - /docs/cloud-storage/bucket-checklist
+  - /docs/cloud-storage/uploads-from-node-service
+  - /docs/cloud-storage/signed-urls
   - /docs/iam
 ---
 
