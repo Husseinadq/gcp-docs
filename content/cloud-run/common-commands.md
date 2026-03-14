@@ -38,6 +38,7 @@ gcloud run services describe SERVICE --region REGION --format='value(spec.templa
 ```bash
 gcloud run services update SERVICE --region REGION --update-env-vars KEY=VALUE
 gcloud run services update SERVICE --region REGION --service-account SERVICE_ACCOUNT_EMAIL
+gcloud run deploy SERVICE --image IMAGE_URI --update-secrets ENV_VAR=SECRET_NAME:latest
 ```
 
 ## Revisions and logs

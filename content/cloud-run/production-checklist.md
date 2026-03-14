@@ -16,6 +16,7 @@ related:
   - /docs/cloud-run/quickstart
   - /docs/cloud-run/common-commands
   - /docs/cloud-run/private-services
+  - /docs/cloud-run/troubleshooting
 ---
 
 ## Deployment checklist

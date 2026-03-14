@@ -18,6 +18,7 @@ prerequisites:
   - A containerized app that runs locally
   - Permission to deploy Cloud Run services
 related:
+  - /docs/cloud-run/env-and-secrets
   - /docs/cloud-run/deploy-from-image
   - /docs/cloud-run/revision-model
   - /docs/cloud-run/common-commands

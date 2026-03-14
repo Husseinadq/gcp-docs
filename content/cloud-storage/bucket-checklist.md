@@ -16,6 +16,7 @@ related:
   - /docs/cloud-storage/quickstart
   - /docs/cloud-storage/object-lifecycle
   - /docs/cloud-storage/common-commands
+  - /docs/cloud-storage/troubleshooting
 ---
 
 ## Bucket checklist

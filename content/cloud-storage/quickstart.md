@@ -21,6 +21,7 @@ related:
   - /docs/cloud-storage/uploads-from-node-service
   - /docs/cloud-storage/signed-urls
   - /docs/cloud-storage/common-commands
+  - /docs/cloud-storage/troubleshooting
 ---
 
 ## Goal

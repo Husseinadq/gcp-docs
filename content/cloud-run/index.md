@@ -15,7 +15,7 @@ bestFor:
 related:
   - /docs/cloud-run/quickstart
   - /docs/cloud-run/deploy-from-image
-  - /docs/cloud-run/common-commands
+  - /docs/cloud-run/troubleshooting
 ---
 
 ## TL;DR
@@ -66,5 +66,6 @@ Choose Compute Engine when the workload truly needs VM-level control. Otherwise 
 ## Read next
 
 - [Deploy from a container image](/docs/cloud-run/deploy-from-image)
+- [Set environment variables and secrets](/docs/cloud-run/env-and-secrets)
 - [Run a private service](/docs/cloud-run/private-services)
-- [Common commands](/docs/cloud-run/common-commands)
+- [Troubleshooting](/docs/cloud-run/troubleshooting)

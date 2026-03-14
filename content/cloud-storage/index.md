@@ -15,7 +15,7 @@ bestFor:
 related:
   - /docs/cloud-storage/quickstart
   - /docs/cloud-storage/uploads-from-node-service
-  - /docs/cloud-storage/common-commands
+  - /docs/cloud-storage/troubleshooting
 ---
 
 ## TL;DR
@@ -64,4 +64,5 @@ Local container storage is not durable application storage. Use Cloud Storage wh
 
 - [Uploads from a Node service](/docs/cloud-storage/uploads-from-node-service)
 - [Signed URLs for browser uploads](/docs/cloud-storage/signed-urls)
-- [Common commands](/docs/cloud-storage/common-commands)
+- [Create download URLs](/docs/cloud-storage/download-urls)
+- [Troubleshooting](/docs/cloud-storage/troubleshooting)

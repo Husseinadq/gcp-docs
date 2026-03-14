@@ -48,6 +48,14 @@ gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
 gcloud storage buckets update "gs://${BUCKET_NAME}" --lifecycle-file=lifecycle.json
 ```
 
+## Signed URLs
+
+```bash
+gcloud storage sign-url "gs://${BUCKET_NAME}/path/file.txt" \
+  --duration=10m \
+  --impersonate-service-account=SERVICE_ACCOUNT_EMAIL
+```
+
 ## Keep this in mind
 
 Buckets are durable storage boundaries.

@@ -18,6 +18,7 @@ prerequisites:
   - A GCP project with billing enabled
   - Permission to create Artifact Registry repos and deploy Cloud Run services
 related:
+  - /docs/cloud-run/env-and-secrets
   - /docs/cloud-run/private-services
   - /docs/cloud-run/common-commands
   - /docs/cloud-run/revision-model
