@@ -6,7 +6,7 @@ goal: I need to know whether Cloud SQL is the right database choice for this app
 summary: Managed relational databases for teams that want SQL with less infrastructure overhead.
 difficulty: beginner
 estimatedTime: 6 minutes
-lastReviewed: 2026-03-11
+lastReviewed: 2026-03-15
 order: 4
 bestFor:
   - Web applications with transactional data
@@ -14,8 +14,8 @@ bestFor:
   - Small and medium products
 related:
   - /docs/cloud-sql/quickstart
-  - /docs/cloud-sql/when-cloud-sql-fits
-  - /docs/cloud-sql/production-checklist
+  - /docs/cloud-sql/connect-from-cloud-run
+  - /docs/cloud-sql/common-commands
 ---
 
 ## TL;DR
@@ -38,7 +38,9 @@ It is usually the right first pick when the team wants PostgreSQL or MySQL witho
 
 ## Fastest starting path
 
-Use Cloud SQL as the database companion to [Cloud Run](/docs/cloud-run) when the product needs relational data and the team wants a managed default.
+1. Start with [Cloud SQL quickstart](/docs/cloud-sql/quickstart) to create one instance, one app database, and one verified connection path.
+2. Use [Connect from Cloud Run](/docs/cloud-sql/connect-from-cloud-run) when the app is already running on GCP.
+3. Keep [Common commands](/docs/cloud-sql/common-commands) open while you work.
 
 ## Common jobs
 
@@ -58,5 +60,6 @@ BigQuery is for analytics, not for the primary transactional store of a web app.
 
 ## Read next
 
-- [Cloud Run](/docs/cloud-run)
-- [How GCP Is Organized](/docs/explain/how-gcp-is-organized)
+- [Connect from Cloud Run](/docs/cloud-sql/connect-from-cloud-run)
+- [Migrations and schema changes](/docs/cloud-sql/migrations-and-schema-changes)
+- [Troubleshooting](/docs/cloud-sql/troubleshooting)

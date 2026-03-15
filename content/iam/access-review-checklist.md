@@ -7,14 +7,16 @@ goal: I know IAM matters and I want a short checklist before access becomes prod
 summary: Review identity boundaries, role scope, and the reason each permission exists.
 difficulty: beginner
 estimatedTime: 5 minutes
-lastReviewed: 2026-03-11
-order: 3
+lastReviewed: 2026-03-15
+order: 5
 bestFor:
   - Access reviews
   - Least-privilege work
 related:
   - /docs/iam/service-accounts-first
   - /docs/iam/mental-model
+  - /docs/iam/common-commands
+  - /docs/iam/troubleshooting
 ---
 
 ## Human access checklist
@@ -22,15 +24,36 @@ related:
 - groups are used where possible
 - project ownership is explicit
 - access changes have a visible reason
+- deployers have only the roles they actually need
 
 ## Workload checklist
 
 - each important workload has its own service account
 - storage, secrets, and deployment permissions are not mixed carelessly
 - broad roles are challenged before they become permanent
+- the runtime service account is not also being used as a human operator shortcut
+
+## Service account safety checklist
+
+- service account keys are avoided unless the workload truly runs outside GCP and cannot use a better identity path
+- users who can act as a service account do not get more privilege than intended through that service account
+- the team can explain which workloads still rely on default service accounts and why
 
 ## Review checklist
 
 - identity, role, and scope can all be explained
 - the team knows who approved broad access
 - permission errors are fixed by design, not by panic
+
+## Useful verification commands
+
+```bash
+gcloud projects get-iam-policy PROJECT_ID \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:group:team@example.com" \
+  --format="table(bindings.role)"
+
+gcloud run services describe SERVICE \
+  --region REGION \
+  --format='value(spec.template.spec.serviceAccountName)'
+```

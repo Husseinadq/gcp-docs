@@ -7,14 +7,16 @@ goal: I know I need Cloud SQL and I want a short review list before depending on
 summary: Review ownership, connection policy, backup assumptions, and data boundaries before launch.
 difficulty: intermediate
 estimatedTime: 6 minutes
-lastReviewed: 2026-03-11
-order: 3
+lastReviewed: 2026-03-15
+order: 5
 bestFor:
   - Database reviews
   - App launch checks
 related:
   - /docs/cloud-sql/quickstart
+  - /docs/cloud-sql/connect-from-cloud-run
   - /docs/cloud-sql/when-cloud-sql-fits
+  - /docs/cloud-sql/common-commands
 ---
 
 ## Ownership checklist
@@ -23,25 +25,21 @@ related:
 - each application boundary is understood
 - the database is not acting as a dumping ground for unrelated workloads
 
-## Common commands
+## Protection checklist
 
 ```bash
-# inspect the instance
-gcloud sql instances describe INSTANCE
-
-# list databases
-gcloud sql databases list --instance=INSTANCE
-
-# list users
-gcloud sql users list --instance=INSTANCE
-
-# create one application database
-gcloud sql databases create appdb --instance=INSTANCE
+gcloud sql instances patch INSTANCE --deletion-protection
+gcloud sql backups list --instance=INSTANCE
 ```
+
+- deletion protection is enabled
+- backup ownership is clear
+- restore responsibility is clear before an incident happens
 
 ## Access checklist
 
 - connection path is documented
+- runtime identity is explicit
 - secrets or credentials are stored intentionally
 - workload identity is understood
 
@@ -54,11 +52,17 @@ gcloud sql databases create appdb --instance=INSTANCE
 | `DB_USER` | Makes the runtime identity explicit at the database layer |
 | `DB_PASSWORD` or secret reference | Avoids hard-coded credentials in the app |
 
-## Safety checklist
+## Connection budget checklist
 
-- backup expectations are explicit
-- restore ownership is clear
+- pool size is intentionally small
+- max service instances are understood
+- the team can explain how many app instances might hit the database at peak
+
+## Schema checklist
+
 - schema changes have a rollout plan
+- destructive changes are not mixed with the same deploy that still needs old columns
+- migrations are tested on the connection path the app really uses
 
 ## Scope checklist
 

@@ -7,16 +7,16 @@ goal: I need to make workload access safe and understandable from the start.
 summary: Give each workload a deliberate identity before attaching access to storage, secrets, or deployment paths.
 difficulty: beginner
 estimatedTime: 9 minutes
-lastReviewed: 2026-03-11
+lastReviewed: 2026-03-15
 order: 1
 bestFor:
   - New GCP projects
   - Cloud Run and GKE workloads
   - Teams cleaning up vague permissions
 related:
-  - /docs/iam/mental-model
-  - /docs/iam/access-review-checklist
-  - /docs/cloud-run
+  - /docs/iam/workload-permissions-for-cloud-run
+  - /docs/iam/common-commands
+  - /docs/iam/troubleshooting
 ---
 
 ## Goal
@@ -60,8 +60,10 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-  --role="roles/logging.logWriter"
+  --role="roles/cloudsql.client"
 ```
+
+Replace those example roles with the exact narrow roles your workload really needs.
 
 ## 4. Verify the current bindings
 
@@ -72,10 +74,28 @@ gcloud projects get-iam-policy "$PROJECT_ID" \
   --format="table(bindings.role)"
 ```
 
+## 5. If the workload is already on Cloud Run, attach the identity
+
+```bash
+export SERVICE="docs-api"
+export REGION="us-central1"
+
+gcloud run services update "$SERVICE" \
+  --region="$REGION" \
+  --service-account="$SERVICE_ACCOUNT_EMAIL"
+
+gcloud run services describe "$SERVICE" \
+  --region="$REGION" \
+  --format='value(spec.template.spec.serviceAccountName)'
+```
+
 ## What this should teach you
 
 - workloads should have their own identities
 - roles should be attached for a reason you can explain
+- user-managed service accounts are better than depending on a vague default
 - broad access is usually a design smell, not a quick win
 
 If you later deploy to Cloud Run or GKE, attach this service account to the workload instead of using a vague shared identity.
+
+Do not create a JSON key for this service account unless you are forced into an off-GCP scenario that cannot use a better identity path.

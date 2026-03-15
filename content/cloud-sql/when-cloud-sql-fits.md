@@ -7,13 +7,14 @@ goal: I need to decide whether this application data really belongs in a managed
 summary: Cloud SQL is the default when the app needs familiar SQL transactions without custom database operations.
 difficulty: beginner
 estimatedTime: 7 minutes
-lastReviewed: 2026-03-11
+lastReviewed: 2026-03-15
 order: 2
 bestFor:
   - Teams choosing between Cloud SQL and Firestore
   - Beginners adding a first database on GCP
 related:
   - /docs/cloud-sql/quickstart
+  - /docs/cloud-sql/connection-model
   - /docs/cloud-sql/production-checklist
   - /docs/bigquery
 ---
@@ -36,6 +37,13 @@ related:
 For many web apps, Cloud SQL is the safe first choice because the team can reason about it quickly.
 
 That matters more than theoretical flexibility the app may never need.
+
+It also gives you a familiar split:
+
+- application code on Cloud Run
+- relational data in Cloud SQL
+- files in Cloud Storage
+- analytics somewhere else later
 
 ## Smallest useful production shape
 
@@ -70,6 +78,7 @@ Cloud SQL is for the application's day-to-day transactional state.
 | app transactions, accounts, orders, joins | Cloud SQL |
 | document-shaped app state and flexible records | Firestore |
 | reporting, dashboards, event analysis | BigQuery |
+| PostgreSQL compatibility with less database toil | Cloud SQL |
 
 ## Red flags
 
@@ -78,3 +87,12 @@ Cloud SQL is probably the wrong first choice if:
 - you still cannot name the main relational entities
 - the team keeps saying "analytics" but has no app database yet
 - files or large blobs are drifting into tables because there is no storage plan
+
+## The production reality check
+
+Cloud SQL is easy to start and still needs discipline:
+
+- keep pool sizes small
+- keep migrations intentional
+- keep one clear owner for backups and restore
+- keep the app boundary obvious so unrelated workloads do not pile into one instance

@@ -6,7 +6,7 @@ goal: I need to understand how identity and permissions work before the project 
 summary: Access control layer for people, groups, service accounts, and resources across GCP.
 difficulty: beginner
 estimatedTime: 6 minutes
-lastReviewed: 2026-03-11
+lastReviewed: 2026-03-15
 order: 8
 bestFor:
   - Teams setting up a project
@@ -14,8 +14,8 @@ bestFor:
   - Service account planning
 related:
   - /docs/iam/service-accounts-first
-  - /docs/iam/mental-model
-  - /docs/iam/access-review-checklist
+  - /docs/iam/grant-project-access
+  - /docs/iam/common-commands
 ---
 
 ## TL;DR
@@ -38,11 +38,14 @@ Do not treat IAM like a cleanup step after the architecture is done.
 
 Permissions are part of the architecture.
 
+Do not default to broad roles or service account keys just because the first error message was unclear.
+
 ## Fastest starting path
 
-1. Read [IAM in Plain English](/docs/explain/iam-in-plain-english).
-2. Decide which humans, groups, and workloads need access.
-3. Use narrow roles first, then widen only when necessary.
+1. Read [IAM mental model](/docs/iam/mental-model) so identity, role, and scope stop feeling random.
+2. Use [Service accounts first](/docs/iam/service-accounts-first) for workloads.
+3. Use [Grant project access](/docs/iam/grant-project-access) for humans through groups.
+4. Keep [Common commands](/docs/iam/common-commands) nearby while you work.
 
 ## Common jobs
 
@@ -63,6 +66,6 @@ Many service settings depend on IAM decisions. That is why IAM belongs early in 
 
 ## Read next
 
-- [IAM in Plain English](/docs/explain/iam-in-plain-english)
-- [How GCP Is Organized](/docs/explain/how-gcp-is-organized)
-- [Cloud Run](/docs/cloud-run)
+- [Grant project access](/docs/iam/grant-project-access)
+- [Workload permissions for Cloud Run](/docs/iam/workload-permissions-for-cloud-run)
+- [Troubleshooting](/docs/iam/troubleshooting)
